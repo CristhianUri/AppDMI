@@ -1,0 +1,7 @@
+{
+  "name": "AppMedicinas",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

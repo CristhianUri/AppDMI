@@ -1,0 +1,24 @@
+<ion-content [fullscreen]="true" class="page-home">
+
+  <ion-grid >
+    <ion-row class="container" >
+        <ion-col class="items" >
+          <ion-col >
+            <h3 class="ion-text-center" style="font-weight: bold">¡Bienvenidos a QrTransport!</h3>
+          </ion-col>
+          <ion-col><ion-img src="../../assets/icon/logo.png" alt="logo " style="height: 200px;"></ion-img></ion-col>
+          <ion-col >
+            <ion-button [routerLink]="['/registrar']" expand="block" size="medium" class="btn-crear" >
+              Crear una cuenta
+            </ion-button></ion-col>
+          <ion-col >
+            <ion-button expand="block"  class="btn-iniciar">
+              Iniciar sesión
+            </ion-button>
+          </ion-col>
+        </ion-col>
+      
+    
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,0 +1,21 @@
+<ion-content [fullscreen]="true" collapse="condense">
+  <ion-grid>
+    <ion-row class="header">
+      <ion-col size="4" ><ion-icon name="arrow-back-outline" size="large" [routerLink]="['/home']"></ion-icon></ion-col>
+      <ion-col size="8" ><ion-title>Registro</ion-title></ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-icon name="person-circle" class="icon"></ion-icon>
+      
+      <ion-col size="12"><ion-input label="Nombre(s)" label-placement="floating" fill="outline" placeholder="Enter text"></ion-input></ion-col>
+      <ion-col size="12"><ion-input label="Apellido(S)" label-placement="floating" fill="outline" placeholder="Enter text"></ion-input></ion-col>
+      <ion-col size="12"><ion-input label="Email" label-placement="floating" fill="outline" placeholder="Enter text"></ion-input></ion-col>
+      <ion-col size="12"><ion-input type="password" label="Contraseña" label-placement="floating" fill="outline" placeholder="Enter text" [counter]="true" maxlength="10"></ion-input></ion-col>
+      <ion-col sizes="12">
+        <ion-button expand="block">Crear cuenta</ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
