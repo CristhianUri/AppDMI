@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
   selector: 'app-root',
   templateUrl: 'app.component.html',
   standalone: true,
-  imports: [ IonicModule, RouterLink],
+  imports: [ IonicModule, RouterLink]
 })
 export class AppComponent {
   constructor() {}
