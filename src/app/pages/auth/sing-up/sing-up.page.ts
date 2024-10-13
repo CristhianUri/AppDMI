@@ -8,6 +8,7 @@ import { CustomInputComponent } from 'src/app/components/custom-input/custom-inp
 import { Router } from '@angular/router';
 import { FirebaseService } from './../../../service/firebase.service';
 import { Student } from './../../../model/user.model';
+import { AlertController } from '@ionic/angular';
 
 
 
@@ -30,39 +31,58 @@ export class SingUpPage implements OnInit {
   utilSvc= inject(UtilsService)
 
 
-  constructor(private router:Router) { }
+  constructor(private router:Router, private alertCtrl: AlertController) { }
 
   ngOnInit() {
   }
-  async submit(){
-    if(this.form.value.password == this.form.value.password2){
-      
-      const student : Student = {
-        uid: '',
-        name: this.form.value.name,
-        email: this.form.value.email,
-        password: this.form.value.password,
-        rol: 'Student',
-        saldo: 0
-      }
-      const loading = await this.utilSvc.loading('Registrando');
-      loading.present();
-      try {
-        await this.firebaseService.registerStudent(student);
-        this.router.navigate(['/home']);
-      } catch (error) {
-        console.error(error);
-      }finally{
-        loading.dismiss();
-      }
-    }else{
-      const loading = await this.utilSvc.loading('Registrando');
-      loading.present();
-      console.log('contraseñas no coniciden')
-      loading.dismiss()
+  async submit() {
+    // Primero validamos si el formulario es válido
+    if (this.form.invalid) {
+      console.log('Formulario inválido');
+      return;
+    }
+  
+    // Validamos si las contraseñas coinciden
+    if (this.form.value.password !== this.form.value.password2) {
+      await this.presentAlert('Las contraseñas no coinciden');
+      return;
+    }
+  
+    // Creamos el objeto student
+    const student: Student = {
+      uid: '',
+      name: this.form.value.name,
+      email: this.form.value.email,
+      password: this.form.value.password,
+      rol: 'Student',
+      saldo: 0
+    };
+  
+    const loading = await this.utilSvc.loading('Registrando');
+    loading.present();
+  
+    try {
+      // Intentamos registrar al usuario
+      await this.firebaseService.registerStudent(student);
+      this.router.navigate(['/home']);
+    } catch (error) {
+      await this.presentAlert('El email se encuentra en uso');
+    } finally {
+      loading.dismiss();
     }
   }
+  
   goBack() {
     this.router.navigate(['/home']); // Cambia '/home' por la ruta de tu página de inicio
   }
+  async presentAlert(message: string) {
+    const alert = await this.alertCtrl.create({
+      header: 'Error',
+      message: message,
+      buttons: ['OK']
+    });
+  
+    await alert.present();
+  }
+  
 }
