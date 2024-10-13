@@ -38,16 +38,16 @@ ion-button {
 
 .submit {
     margin-top: 20px;
-    --background: #1b0b3c;
-    --background-activated: #322350;
-    
+    --background: #77CB55;
+    --background-activated: #7ED957;
+
 }
 
 .submit2{
     margin-top: 20px; /* Margen superior */
     --background: #1b0b3c; /* Color de fondo */
     --background-activated: #322350;
-    
+
 }
 .counter {
     text-align: right;
@@ -62,6 +62,7 @@ ion-button {
     color: #000; /* Color del icono, puedes cambiarlo */
     cursor: pointer; /* Cambia el cursor al pasar sobre el icono */
 }
+
 .empty {
     text-align: center;
     padding: 60px;
@@ -118,7 +119,7 @@ ion-button {
     margin-top: 50px;
     text-align: center;
     padding: 20px;
-    
+
 }
 .product-item {
     --padding-top: 20px;

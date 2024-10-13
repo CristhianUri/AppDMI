@@ -1,26 +1,25 @@
 
 <ion-content >
-  <ion-icon 
-  name="arrow-back" 
-  class="back-icon" 
+  <ion-icon
+  name="arrow-back"
+  class="back-icon"
   (click)="goBack()">
 </ion-icon>
   <div class="d-flex-center">
     <form [formGroup]="form" class="auth-form" (ngSubmit)="submit()">
-      
+
+
+      <ion-img src="../../assets/icon/LogoSIN.png" alt="logo " style="height: 200px;"></ion-img>
       <ion-text>
-        <h1> <strong>Iniciar sesión</strong></h1>
-      </ion-text>
-      <ion-img src="../../assets/icon/logo.png" alt="logo " style="height: 200px;"></ion-img>
-      <ion-text>
-        <h4><strong>Bienvenido a QrTransport</strong></h4>
+        <h4><strong>Iniciar Sesión</strong></h4>
+        <p>Llena el formulario para continuar</p>
       </ion-text>
       <app-custom-input
       autocomplete="email"
       icon="mail-outline"
       [control]="form.controls.email"
       type="email"
-      label="Ingresa tu correo electronico"
+      label="Correo electronico"
       [isLengthRestricted]="false"
       ></app-custom-input>
       <div class="validators" *ngIf="form.controls.email.errors && form.controls.email.touched">
@@ -32,7 +31,7 @@
       autocomplete="password"
       [control]="form.controls.password"
       type="password"
-      label="Ingresa tu contraseña"
+      label="Contraseña"
       icon="lock-closed-outline"
       [counter]="true"
       [maxlength]="10"></app-custom-input>
@@ -41,10 +40,18 @@
         <div *ngIf="form.controls.password.errors?.['maxlength']" >La contraseña debe tener 10 caracteres</div>
         <div *ngIf="form.controls.password.errors?.['minlength']" >La contraseña debe tener 10 caracteres</div>
       </div>
-      <p [routerLink]="['/forgot-password']" class="ion-text-end">¿Olvidaste tu contraseña?</p>
-      <ion-button  expand="block" mode="ios" class="submit" type="submit">Ingresar</ion-button>
-      {{form.value | json}}
+
+      <ion-button expand="block" mode="ios" fill="clear" [routerLink]="['/admin-home']" class="submit" type="submit">
+        <strong>Ingresar</strong>
+      </ion-button>
+
+      <ion-text color="success"  >
+        <p [routerLink]="['/forgot-password']" class="ion-text-center">¿Olvidaste tu contraseña?</p>
+      </ion-text>
+
+
+      <!-- {{form.value | json}} -->
     </form>
   </div>
-  
+
 </ion-content>

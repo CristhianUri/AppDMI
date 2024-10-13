@@ -1,20 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonicModule } from '@ionic/angular';
+import { CustomInputComponent } from 'src/app/components/custom-input/custom-input.component';
+import {  Router, RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-admin-home',
   templateUrl: './admin-home.page.html',
   styleUrls: ['./admin-home.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule]
+  imports: [CommonModule, FormsModule, IonicModule, CustomInputComponent, RouterLink]
 })
 export class AdminHomePage implements OnInit {
 
+  
+
+
   constructor() { }
 
-  ngOnInit() {
-  }
-
+  ngOnInit() {}
 }

@@ -1,13 +1,109 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>admin-home</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
+<!-- Menu -->
+<ion-menu contentId="main-content">
     <ion-toolbar>
-      <ion-title size="large">admin-home</ion-title>
+      <ion-img src="../../assets/icon/LogoSIN.png" alt="logo " style="height: 200px;"></ion-img>
+      <ion-title class="ion-text-center" ><strong>Administrador</strong></ion-title>
+    </ion-toolbar>
+  <ion-content class="ion-padding">
+    <ion-list lines="none" >
+      <ion-item [routerLink]="['/forgot-password']">
+        <ion-label>Recargar</ion-label>
+      </ion-item>
+      <ion-item [routerLink]="['/forgot-password']">
+        <ion-label>Historial de recargas</ion-label>
+      </ion-item>
+      <ion-item [routerLink]="['/forgot-password']">
+        <ion-label>Registrar</ion-label>
+      </ion-item>
+      <ion-item [routerLink]="['/forgot-password']">
+        <ion-label>Lista de consuctores</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<!-- Contenido de la pantalla -->
+<div class="ion-page" id="main-content">
+  <ion-header>
+    <ion-toolbar color="tertiary">
+      <ion-buttons slot="start">
+        <ion-menu-button></ion-menu-button>
+      </ion-buttons>
+      <ion-title class="ion-text-center">Recargar</ion-title>
     </ion-toolbar>
   </ion-header>
-</ion-content>
+  <ion-content class="ion-padding">
+
+    <ion-img src="../../assets/icon/usuario.png" alt="logo " style="height: 200px;"></ion-img>
+
+    <p class="ion-text-center">Cobrador: [Admin1]</p>
+
+    <!-- Formulario para recargar -->
+    <div class="d-flex-center">
+      <form class="auth-form" >
+        <app-custom-input
+        type="email"
+        label="Correo Electrónico"
+        autocomplete="email"
+        icon="mail">
+        </app-custom-input>
+
+        <app-custom-input
+          type="number"
+          label="Cantidad"
+          autocomplete="off"
+          icon="cash"
+        ></app-custom-input>
+
+        <app-custom-input
+          type="number"
+          label="Repetir cantidad"
+          autocomplete="off"
+          icon="cash"
+        ></app-custom-input>
+        <!-- Boton de Recargar -->
+        <ion-button expand="block" mode="ios"  id="open-modal" color="dark" type="submit">
+          <strong>Recargar</strong>
+        </ion-button>
+      </form>
+
+    </div>
+
+  <!-- Modal que se abre -->
+  <ion-modal #modal trigger="open-modal">
+    <ng-template>
+      <ion-content>
+        <ion-header>
+          <ion-toolbar color="primary">
+            <ion-title class="ion-text-center">Verificación de seguridad</ion-title>
+          </ion-toolbar>
+        </ion-header >
+        <p class="ion-padding"><strong>Estás enviando una recarga a:</strong></p>
+        <ion-list>
+          <ion-item>
+            <ion-avatar slot="start">
+              <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
+            </ion-avatar>
+            <ion-label>
+              <h2>Connor Smith</h2>
+              <p>a352111587alumno.utte</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+        <p class="ion-padding"><strong>De: [$150]</strong></p>
+        <ion-grid>
+          <ion-row class="ion-justify-content-between">
+            <ion-col>
+              <ion-button expand="block" color="danger" (click)="modal.dismiss()">Cancelar</ion-button>
+            </ion-col>
+            <ion-col>
+              <ion-button expand="block" color="primary" (click)="modal.dismiss()">Confirmar</ion-button>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  </ion-content>
+</div>
