@@ -37,7 +37,7 @@ ion-button {
 }
 
 .submit {
-    margin-top: 40px;
+    margin-top: 20px;
     --background: #1b0b3c;
     --background-activated: #322350;
     
@@ -49,6 +49,11 @@ ion-button {
     --background-activated: #322350;
     
 }
+.counter {
+    text-align: right;
+    font-size: 12px;
+    color: #6c757d;
+  }
 .back-icon {
     position: absolute;
     top: 20px; /* Ajusta según tus necesidades */
@@ -107,7 +112,7 @@ ion-button {
 .auth-form {
     width: 100%;
     text-align: center;
-    padding: 20px;
+    padding: 10px;
 }
 .home{
     margin-top: 50px;

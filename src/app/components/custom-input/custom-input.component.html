@@ -6,8 +6,13 @@
   [label]="label"
   [formControl]="control"
   labelPlacement="floating"
+  (input)="handleInput($event)"
   ></ion-input>
   <ion-button *ngIf="isPassword" (click)="showOrHidePassword()" slot="end" fill="clear" shape="round">
     <ion-icon slot="icon-only" [name]="hide ?'eye-outline' : 'eye-off-outline'"></ion-icon>
   </ion-button>
+  
 </ion-item>
+<div *ngIf="counter" class="counter">
+    {{ control.value?.length || 0 }}/{{ maxlength }}
+  </div>

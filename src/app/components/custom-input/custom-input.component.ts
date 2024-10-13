@@ -20,6 +20,10 @@ export class CustomInputComponent  implements OnInit {
   @Input() label!: string;
   @Input() autocomplete!: string;
   @Input() icon!: string;
+  
+  @Input() maxlength: number = 10; // Recibe el valor del maxlength por defecto 10
+  @Input() counter: boolean = false;  // Longitud máxima de caracteres
+  @Input() isLengthRestricted: boolean = true;
 
   isPassword!: boolean;
   hide: boolean =true;
@@ -35,6 +39,22 @@ export class CustomInputComponent  implements OnInit {
 
     if(this.hide) this.type ='password';
     else this.type = 'text';
+  }
+
+  handleInput(event: any) {
+    const input = event.target;
+
+    // Controlar la longitud máxima de caracteres
+    if (this.isLengthRestricted && input.value.length > this.maxlength) {
+      input.value = input.value.slice(0, this.maxlength); // Recorta el valor
+    }
+
+    // Evitar caracteres negativos (si es que estás permitiendo números)
+    if (this.type === 'number') {
+      input.value = input.value.replace(/[^0-9]/g, ''); // Permitir solo números
+    }
+
+    this.control.setValue(input.value); // Actualiza el valor del control
   }
 
 }
