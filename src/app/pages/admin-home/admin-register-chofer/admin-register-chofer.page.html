@@ -1,0 +1,66 @@
+<app-header cargo="Administrador" title="Registrar" [menuItem]="menuItem"></app-header>
+<ion-router-outlet id="main-content"></ion-router-outlet>
+<!-- Contenido de la pantalla -->
+<div class="ion-page" >
+
+  <ion-content class="ion-padding">
+    <div style="padding-top: 50px;" >
+      <p class="ion-text-center">Adiministrador: [Juan Perez]</p>
+    </div>
+    <!-- Formulario para recargar -->
+    <div class="d-flex-center">
+      <form class="auth-form" >
+        <app-custom-input
+        type="string"
+        label="Nombre Completo"
+        autocomplete="email"
+        icon="person-circle-outline">
+        </app-custom-input>
+        <app-custom-input
+        type="email"
+        label="Correo Electrónico"
+        autocomplete="email"
+        icon="mail-outline">
+        </app-custom-input>
+        <app-custom-input
+        type="string"
+        label="Fecha de inicio"
+        autocomplete="off"
+        icon="calendar-outline"
+      ></app-custom-input>
+        <app-custom-input
+          type="number"
+          label="Teléfono"
+          autocomplete="off"
+          icon="call-outline"
+        ></app-custom-input>
+
+        <app-custom-input
+        autocomplete="password"
+        type="password"
+        label="Contraseña"
+        icon="lock-closed-outline"
+        [counter]="true"
+        [maxlength]="10"></app-custom-input>
+
+
+      <ion-list>
+        <ion-item>
+          <ion-select aria-label="Favorite Fruit" value="apple">
+            <ion-select-option value="apple">Rol</ion-select-option>
+            <ion-select-option value="banana">Chofer</ion-select-option>
+            <ion-select-option value="orange">Administrador</ion-select-option>
+          </ion-select>
+        </ion-item>
+      </ion-list>
+        <!-- Boton de Recargar -->
+        <ion-button expand="block" mode="ios"  id="open-modal" color="tertiary" type="submit">
+          <strong>Registrar</strong>
+        </ion-button>
+      </form>
+
+    </div>
+
+
+  </ion-content>
+</div>

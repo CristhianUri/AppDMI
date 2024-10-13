@@ -36,5 +36,17 @@ export const routes: Routes = [
   {
     path: 'admin-home',
     loadComponent: () => import('./pages/admin-home/admin-home.page').then( m => m.AdminHomePage)
+  },  {
+    path: 'admin-list',
+    loadComponent: () => import('./pages/admin-home/admin-list/admin-list.page').then( m => m.AdminListPage)
+  },
+  {
+    path: 'admin-register-chofer',
+    loadComponent: () => import('./pages/admin-home/admin-register-chofer/admin-register-chofer.page').then( m => m.AdminRegisterChoferPage)
+  },
+  {
+    path: 'admin-payment-history',
+    loadComponent: () => import('./pages/admin-home/admin-payment-history/admin-payment-history.page').then( m => m.AdminPaymentHistoryPage)
   }
+
 ];

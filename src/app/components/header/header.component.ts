@@ -11,10 +11,11 @@ import { FirebaseService } from 'src/app/service/firebase.service';
   styleUrls: ['./header.component.scss'],
   standalone: true,
   imports :[IonicModule,RouterLink,CommonModule]
-}) 
+})
 export class HeaderComponent  implements OnInit {
   @Input() menuItem: { title: string; route: string }[] = [];
   @Input () title!: string;
+  @Input () cargo!: string;
 
   private auth = inject(FirebaseService);
   constructor(private router:Router) { }

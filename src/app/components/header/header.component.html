@@ -1,21 +1,23 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar color="primary">
+<ion-header>
+  <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
-    <ion-title>{{title}}</ion-title>
-    <ion-title><div class="admin">Q R T R A N S P O R T</div></ion-title>
+    <ion-title class="ion-text-center">{{title}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-menu  contentId="main-content">
-  <ion-header>
-    <ion-toolbar>
-      <ion-title><img src="../../../assets/icon/logo.png" alt="" height="200px"></ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-toolbar>
+    <ion-title class="ion-text-center ion-padding" ><div class="admin">Q R T R A N S P O R T</div></ion-title>
+    <ion-img src="../../assets/icon/LogoSIN.png" alt="logo " style="height: 200px;"></ion-img>
+    <ion-title class="ion-text-center" ><strong>{{cargo}}</strong></ion-title>
+  </ion-toolbar>
+  <!-- <ion-header>
+      <ion-title><img src="../../../assets/icon/LogoSIN.png" alt="" height="200px"></ion-title>
+  </ion-header> -->
   <ion-content>
-    <ion-list>
+    <ion-list class="ion-padding" lines="none" >
       <ion-item *ngFor="let item of menuItem" [routerLink]="item.route">
         {{ item.title }}
       </ion-item>
