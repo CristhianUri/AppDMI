@@ -66,7 +66,7 @@ export class SingUpPage implements OnInit {
   
     try {
       // Intentamos registrar al usuario
-      await this.firebaseService.registerStudent(userGeneric);
+      await this.firebaseService.registerUser(userGeneric);
       this.router.navigate(['/home']);
     } catch (error) {
       await this.presentAlert('El email se encuentra en uso');
