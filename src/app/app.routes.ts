@@ -3,7 +3,7 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
  {
   path: '',
-  loadComponent: ()=> import('./pages/auth/auth.page').then(m=>m.AuthPage)
+  loadComponent: ()=> import('./home/home.page').then(m=>m.HomePage)
  },
  {
   path: 'home',
@@ -36,7 +36,8 @@ export const routes: Routes = [
   {
     path: 'admin-home',
     loadComponent: () => import('./pages/admin-home/admin-home.page').then( m => m.AdminHomePage)
-  },  {
+  },
+  {
     path: 'admin-list',
     loadComponent: () => import('./pages/admin-home/admin-list/admin-list.page').then( m => m.AdminListPage)
   },

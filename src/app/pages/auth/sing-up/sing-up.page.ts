@@ -7,8 +7,9 @@ import { IonicModule } from '@ionic/angular';
 import { CustomInputComponent } from 'src/app/components/custom-input/custom-input.component';
 import { Router } from '@angular/router';
 import { FirebaseService } from './../../../service/firebase.service';
-import { Student } from './../../../model/user.model';
+import { UserGeneric } from './../../../model/user.model';
 import { AlertController } from '@ionic/angular';
+
 
 
 
@@ -47,15 +48,17 @@ export class SingUpPage implements OnInit {
       await this.presentAlert('Las contraseñas no coinciden');
       return;
     }
-  
+    
     // Creamos el objeto student
-    const student: Student = {
+    const userGeneric: UserGeneric = {
       uid: '',
       name: this.form.value.name,
       email: this.form.value.email,
       password: this.form.value.password,
       rol: 'Student',
-      saldo: 0
+      saldo: 0,
+      fecha: new Date(),
+      telefono: 0
     };
   
     const loading = await this.utilSvc.loading('Registrando');
@@ -63,7 +66,7 @@ export class SingUpPage implements OnInit {
   
     try {
       // Intentamos registrar al usuario
-      await this.firebaseService.registerStudent(student);
+      await this.firebaseService.registerStudent(userGeneric);
       this.router.navigate(['/home']);
     } catch (error) {
       await this.presentAlert('El email se encuentra en uso');

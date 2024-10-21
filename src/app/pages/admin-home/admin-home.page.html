@@ -12,21 +12,22 @@
 
     <!-- Formulario para recargar -->
     <div class="d-flex-center">
-      <form class="auth-form" >
+      <form [formGroup]="form" class="auth-form" >
+        <!--email-->
         <app-custom-input
         type="email"
         label="Correo Electrónico"
         autocomplete="email"
         icon="mail-outline">
         </app-custom-input>
-
+      <!--saldo-->
         <app-custom-input
           type="number"
           label="Cantidad"
           autocomplete="off"
           icon="cash-outline"
         ></app-custom-input>
-
+      <!--saldo-->
         <app-custom-input
           type="number"
           label="Repetir cantidad"

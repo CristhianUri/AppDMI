@@ -9,32 +9,36 @@
     </div>
     <!-- Formulario para recargar -->
     <div class="d-flex-center">
-      <form class="auth-form" >
+      <form [formGroup]="form" class="auth-form" >
+        <!--name-->
         <app-custom-input
         type="string"
         label="Nombre Completo"
         autocomplete="email"
         icon="person-circle-outline">
         </app-custom-input>
+        <!--email-->
         <app-custom-input
         type="email"
         label="Correo Electrónico"
         autocomplete="email"
         icon="mail-outline">
         </app-custom-input>
+        <!--Fecha de inicio-->
         <app-custom-input
         type="string"
         label="Fecha de inicio"
         autocomplete="off"
         icon="calendar-outline"
       ></app-custom-input>
+      <!--Numero Telefonico-->
         <app-custom-input
           type="number"
           label="Teléfono"
           autocomplete="off"
           icon="call-outline"
         ></app-custom-input>
-
+      <!--contraseña-->
         <app-custom-input
         autocomplete="password"
         type="password"
@@ -43,7 +47,7 @@
         [counter]="true"
         [maxlength]="10"></app-custom-input>
 
-
+        <!--rol-->
       <ion-list>
         <ion-item>
           <ion-select aria-label="Favorite Fruit" value="apple">

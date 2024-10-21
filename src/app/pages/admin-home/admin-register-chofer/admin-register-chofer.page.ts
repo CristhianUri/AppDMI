@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule,FormGroup, FormControl,Validators } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonButton, IonList, IonItem, IonSelect, IonSelectOption,IonRouterOutlet } from '@ionic/angular/standalone';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { CustomInputComponent } from 'src/app/components/custom-input/custom-input.component';
@@ -10,9 +10,17 @@ import { CustomInputComponent } from 'src/app/components/custom-input/custom-inp
   templateUrl: './admin-register-chofer.page.html',
   styleUrls: ['./admin-register-chofer.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HeaderComponent,CustomInputComponent, IonButton, IonItem, IonList, IonSelect, IonSelectOption, IonRouterOutlet]
+  imports: [IonContent,ReactiveFormsModule, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, HeaderComponent,CustomInputComponent, IonButton, IonItem, IonList, IonSelect, IonSelectOption, IonRouterOutlet]
 })
 export class AdminRegisterChoferPage implements OnInit {
+
+  form = new FormGroup ({
+    name: new FormControl('',[Validators.required]),
+    email : new FormControl('', [Validators.required,Validators.email]),
+    password: new FormControl('', [Validators.required,Validators.maxLength(10),Validators.minLength(10)]),
+    password2: new FormControl('', [Validators.required,Validators.maxLength(10),Validators.minLength(10)]),
+  });
+
 
   title: string = 'Recargar';
   menuItem = [

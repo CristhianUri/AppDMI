@@ -1,10 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { Auth,createUserWithEmailAndPassword , signInWithEmailAndPassword, sendEmailVerification} from '@angular/fire/auth';
 import { Firestore,doc,setDoc} from '@angular/fire/firestore';
-import { Student, User } from './../model/user.model';
+import {  UserGeneric } from './../model/user.model';
 import { getDoc } from 'firebase/firestore';
 import { Router } from '@angular/router';
 import { UtilsService } from './utils.service';
+
 
 
 
@@ -19,27 +20,52 @@ export class FirebaseService {
   firestore = inject(Firestore);
   router = inject(Router);
   utilSvc= inject(UtilsService);
-  async registerStudent(student: Student) {
+
+  async registerUser(usergeneric: UserGeneric) {
     try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, student.email, student.password);
-      const user = userCredential.user;
+      // Crear el usuario con correo y contraseña
+      const userCredential = await createUserWithEmailAndPassword(this.auth, usergeneric.email, usergeneric.password);
+      const createdUser = userCredential.user;
   
       // Enviar correo de verificación
-      await sendEmailVerification(user);
+      await sendEmailVerification(createdUser);
   
-      const uid = user.uid;
+      const uid = createdUser.uid;
   
-      // Guardar al estudiante en Firestore
-      await setDoc(doc(this.firestore, 'students', uid), {
-        uid: uid,
-        name: student.name,
-        rol: student.rol,
-        saldo: student.saldo
-      });
+      // Verificar el rol y almacenar en Firestore según corresponda
+      if (usergeneric.rol === 'Student') {
+        // Guardar solo los campos necesarios para el estudiante
+        await setDoc(doc(this.firestore, 'students', uid), {
+          uid: uid,
+          name: usergeneric.name,
+          rol: usergeneric.rol,
+          saldo: usergeneric.saldo
+          // No guardamos el teléfono, ya que no es necesario
+        });
+      } else if (usergeneric.rol === 'Driver') {
+        // Guardar solo los campos necesarios para el chofer
+        await setDoc(doc(this.firestore, 'drivers', uid), {
+          uid: uid,
+          name: usergeneric.name,
+          rol: usergeneric.rol,
+          telefono: usergeneric.telefono, // El chofer tiene teléfono
+          saldo: usergeneric.saldo // Si aplica
+        });
+      } else if (usergeneric.rol === 'Admin') {
+        // Guardar solo los campos necesarios para el administrador
+        await setDoc(doc(this.firestore, 'admins', uid), {
+          uid: uid,
+          name: usergeneric.name,
+          rol: usergeneric.rol,
+          telefono: usergeneric.telefono // El administrador también tiene teléfono
+        });
+      }
   
-      console.log('Usuario registrado. Correo de verificación enviado.');
-      // Puedes mostrar un mensaje indicando que revise su correo para la verificación
+      console.log('Usuario registrado y almacenado en Firestore.');
+      
+      // Mostrar alerta para verificar el correo
       await this.utilSvc.Alerta('Correo de verificación', 'Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada.');
+      
     } catch (error) {
       console.error('Error en el registro: ' + error);
       throw error;
