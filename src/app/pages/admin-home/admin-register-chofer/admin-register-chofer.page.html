@@ -11,7 +11,7 @@
     <div class="d-flex-center">
       <form [formGroup]="form" class="auth-form" (ngSubmit)="onSubmit()">
         <!-- Nombre -->
-        <app-custom-input type="text" label="Nombre Completo" [control]="form.controls.name" autocomplete="off" icon="person-circle-outline"></app-custom-input>
+        <app-custom-input type="text" label="Nombre Completo" [isLengthRestricted]="false" [control]="form.controls.name" autocomplete="off" icon="person-circle-outline"></app-custom-input>
         <div *ngIf="form.get('name').invalid && (form.get('name').dirty || form.get('name').touched)">
           <small *ngIf="form.get('name').errors?.['required']">El nombre es obligatorio.</small>
         </div>
@@ -42,8 +42,8 @@
         <ion-item>
           <ion-label>Tipo de usuario</ion-label>
           <ion-select formControlName="role">
-            <ion-select-option value="admin">Administrador</ion-select-option>
-            <ion-select-option value="driver">Chofer</ion-select-option>
+            <ion-select-option value="Admin">Administrador</ion-select-option>
+            <ion-select-option value="Driver">Chofer</ion-select-option>
           </ion-select>
         </ion-item>
         <div *ngIf="form.get('role').invalid && (form.get('role').dirty || form.get('role').touched)">

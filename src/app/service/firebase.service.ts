@@ -74,14 +74,16 @@ export class FirebaseService {
           name: usergeneric.name,
           rol: usergeneric.rol,
           telefono: usergeneric.telefono,
-          saldo: usergeneric.saldo
+          saldo: usergeneric.saldo,
+          fechar_Creacion: usergeneric.fecha
         });
       } else if (usergeneric.rol === 'Admin') {
         await setDoc(doc(this.firestore, 'admins', uid), {
           uid: uid,
           name: usergeneric.name,
           rol: usergeneric.rol,
-          telefono: usergeneric.telefono
+          telefono: usergeneric.telefono,
+          fechar_Creacion: usergeneric.fecha
         });
       }
 
@@ -139,13 +141,36 @@ export class FirebaseService {
   async login(email: string, password: string): Promise<void> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
-      await this.getCurrentUser(userCredential); // Pasa userCredential como parámetro
+      const user = userCredential.user;
   
-      // Almacenar en localStorage para persistencia
-      const user = userCredential.user; 
+      // Comprobar si el correo está verificado
+      if (!user.emailVerified) {
+        // Mostrar alerta personalizada
+        await this.utilSvc.AlertaConOpciones(
+          'Correo no verificado',
+          'Por favor, verifica tu correo antes de iniciar sesión.',
+          async () => {
+            // Reenviar correo de verificación
+            await sendEmailVerification(user);
+            await this.utilSvc.Alerta('Correo reenviado', 'Se ha reenviado el correo de verificación.');
+          },
+          () => {
+            // Acción si el usuario no quiere reenviar
+            console.log('El usuario no desea reenviar el correo.');
+          }
+        );
+  
+        // Cerrar sesión antes de mostrar la alerta
+        await this.auth.signOut();
+        return; // Salir del método
+      }
+  
+      // Solo si el correo está verificado, procedemos a obtener el usuario actual
+      await this.getCurrentUser(userCredential); 
+  
+      // Almacenar en localStorage
       const uid = user.uid;
-  
-      // Verificar el rol del usuario y almacenar en localStorage
+      
       const userSnap = await getDoc(doc(this.firestore, 'students', uid));
       if (userSnap.exists()) {
         localStorage.setItem('isLoggedIn', 'true');
@@ -175,6 +200,7 @@ export class FirebaseService {
         this.router.navigate(['/admin-home']);
         return;
       }
+  
     } catch (error) {
       console.error('Error en el inicio de sesión: ', error);
     }
