@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guard/auth.guard';
 
 export const routes: Routes = [
  {
@@ -9,10 +10,6 @@ export const routes: Routes = [
   path: 'home',
   loadComponent: ()=> import('./home/home.page').then(m=>m.HomePage)
  },
-  {
-    path: 'actualizar',
-    loadComponent: () => import('./actualizar/actualizar.page').then( m => m.ActualizarPage)
-  },
   {
     path: 'auth',
     loadComponent: () => import('./pages/auth/auth.page').then( m => m.AuthPage)
@@ -27,27 +24,42 @@ export const routes: Routes = [
   },
   {
     path: 'student-home',
-    loadComponent: () => import('./pages/student-home/student-home.page').then( m => m.StudentHomePage)
+    loadComponent: () => import('./pages/student-home/student-home.page').then( m => m.StudentHomePage), 
+    canActivate:[authGuard],
+    data: { role: 'Student' }
   },
   {
     path: 'drives-home',
-    loadComponent: () => import('./pages/drives-home/drives-home.page').then( m => m.DrivesHomePage)
+    loadComponent: () => import('./pages/drives-home/drives-home.page').then( m => m.DrivesHomePage),
+    canActivate:[authGuard],
+    data: { role: 'Driver' }
   },
   {
     path: 'admin-home',
-    loadComponent: () => import('./pages/admin-home/admin-home.page').then( m => m.AdminHomePage)
+    loadComponent: () => import('./pages/admin-home/admin-home.page').then( m => m.AdminHomePage),
+    canActivate:[authGuard],
+    data: { role: 'Admin' }
   },
   {
     path: 'admin-list',
-    loadComponent: () => import('./pages/admin-home/admin-list/admin-list.page').then( m => m.AdminListPage)
+    loadComponent: () => import('./pages/admin-home/admin-list/admin-list.page').then( m => m.AdminListPage),
+    canActivate:[authGuard],
+    data: { role: 'Admin' }
+  
   },
   {
     path: 'admin-register-chofer',
-    loadComponent: () => import('./pages/admin-home/admin-register-chofer/admin-register-chofer.page').then( m => m.AdminRegisterChoferPage)
+    loadComponent: () => import('./pages/admin-home/admin-register-chofer/admin-register-chofer.page').then( m => m.AdminRegisterChoferPage),
+    //canActivate:[authGuard],
+    //data: { role: 'Admin' }
+  
   },
   {
     path: 'admin-payment-history',
-    loadComponent: () => import('./pages/admin-home/admin-payment-history/admin-payment-history.page').then( m => m.AdminPaymentHistoryPage)
+    loadComponent: () => import('./pages/admin-home/admin-payment-history/admin-payment-history.page').then( m => m.AdminPaymentHistoryPage),
+    canActivate:[authGuard],
+    data: { role: 'Admin' }
+  
   }
 
 ];

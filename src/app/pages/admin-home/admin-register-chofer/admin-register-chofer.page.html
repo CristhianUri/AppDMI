@@ -1,64 +1,57 @@
 <app-header cargo="Administrador" title="Registrar" [menuItem]="menuItem"></app-header>
 <ion-router-outlet id="main-content"></ion-router-outlet>
 <!-- Contenido de la pantalla -->
-<div class="ion-page" >
+<div class="ion-page">
 
   <ion-content class="ion-padding">
-    <div style="padding-top: 50px;" >
+    <div style="padding-top: 50px;">
       <p class="ion-text-center">Adiministrador: [Juan Perez]</p>
     </div>
     <!-- Formulario para recargar -->
     <div class="d-flex-center">
-      <form [formGroup]="form" class="auth-form" >
-        <!--name-->
-        <app-custom-input
-        type="string"
-        label="Nombre Completo"
-        autocomplete="email"
-        icon="person-circle-outline">
-        </app-custom-input>
-        <!--email-->
-        <app-custom-input
-        type="email"
-        label="Correo Electrónico"
-        autocomplete="email"
-        icon="mail-outline">
-        </app-custom-input>
-        <!--Fecha de inicio-->
-        <app-custom-input
-        type="string"
-        label="Fecha de inicio"
-        autocomplete="off"
-        icon="calendar-outline"
-      ></app-custom-input>
-      <!--Numero Telefonico-->
-        <app-custom-input
-          type="number"
-          label="Teléfono"
-          autocomplete="off"
-          icon="call-outline"
-        ></app-custom-input>
-      <!--contraseña-->
-        <app-custom-input
-        autocomplete="password"
-        type="password"
-        label="Contraseña"
-        icon="lock-closed-outline"
-        [counter]="true"
-        [maxlength]="10"></app-custom-input>
-
-        <!--rol-->
-      <ion-list>
+      <form [formGroup]="form" class="auth-form" (ngSubmit)="onSubmit()">
+        <!-- Nombre -->
+        <app-custom-input type="text" label="Nombre Completo" [control]="form.controls.name" autocomplete="off" icon="person-circle-outline"></app-custom-input>
+        <div *ngIf="form.get('name').invalid && (form.get('name').dirty || form.get('name').touched)">
+          <small *ngIf="form.get('name').errors?.['required']">El nombre es obligatorio.</small>
+        </div>
+    
+        <!-- Email -->
+        <app-custom-input autocomplete="email" icon="mail-outline" [control]="form.controls.email" type="email"
+        label="Ingresa tu correo electronico" [isLengthRestricted]="false"></app-custom-input>
+        <div *ngIf="form.get('email').invalid && (form.get('email').dirty || form.get('email').touched)">
+          <small *ngIf="form.get('email').errors?.['required']">El correo es obligatorio.</small>
+          <small *ngIf="form.get('email').errors?.['email']">El correo no es válido.</small>
+        </div>
+    
+        <!-- Teléfono -->
+        <app-custom-input type="text" label="Teléfono" [control]="form.controls.telefono" autocomplete="off" icon="call-outline"></app-custom-input>
+        <div *ngIf="form.get('telefono').invalid && (form.get('telefono').dirty || form.get('telefono').touched)">
+          <small *ngIf="form.get('telefono').errors?.['required']">El teléfono es obligatorio.</small>
+          <small *ngIf="form.get('telefono').errors?.['pattern']">El formato del teléfono no es válido.</small>
+        </div>
+    
+        <!-- Contraseña -->
+        <app-custom-input autocomplete="off" type="password" label="Contraseña" [control]="form.controls.password" icon="lock-closed-outline" [counter]="true" [maxlength]="10"></app-custom-input>
+        <div *ngIf="form.get('password').invalid && (form.get('password').dirty || form.get('password').touched)">
+          <small *ngIf="form.get('password').errors?.['required']">La contraseña es obligatoria.</small>
+          <small *ngIf="form.get('password').errors?.['minlength'] || form.get('password').errors?.['maxlength']">La contraseña debe tener exactamente 10 caracteres.</small>
+        </div>
+    
+        <!-- Rol -->
         <ion-item>
-          <ion-select aria-label="Favorite Fruit" value="apple">
-            <ion-select-option value="apple">Rol</ion-select-option>
-            <ion-select-option value="banana">Chofer</ion-select-option>
-            <ion-select-option value="orange">Administrador</ion-select-option>
+          <ion-label>Tipo de usuario</ion-label>
+          <ion-select formControlName="role">
+            <ion-select-option value="admin">Administrador</ion-select-option>
+            <ion-select-option value="driver">Chofer</ion-select-option>
           </ion-select>
         </ion-item>
-      </ion-list>
-        <!-- Boton de Recargar -->
-        <ion-button expand="block" mode="ios"  id="open-modal" color="tertiary" type="submit">
+        <div *ngIf="form.get('role').invalid && (form.get('role').dirty || form.get('role').touched)">
+          <small *ngIf="form.get('role').errors?.['required']">Debes seleccionar un rol.</small>
+        </div>
+    
+        <!-- Botón de Registrar -->
+        <ion-button expand="block" mode="ios" color="tertiary" class="submit" type="submit" >
           <strong>Registrar</strong>
         </ion-button>
       </form>

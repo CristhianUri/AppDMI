@@ -39,7 +39,7 @@ export class SingUpPage implements OnInit {
   async submit() {
     // Primero validamos si el formulario es válido
     if (this.form.invalid) {
-      console.log('Formulario inválido');
+      await this.presentAlert('Favor de llenar todos los campos');
       return;
     }
   

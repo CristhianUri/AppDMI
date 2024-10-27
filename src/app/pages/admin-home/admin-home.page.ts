@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormGroup,Validators,FormControl } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, Validators, FormControl } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { CustomInputComponent } from 'src/app/components/custom-input/custom-input.component';
-import {  Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 
 
@@ -12,7 +12,7 @@ import { HeaderComponent } from 'src/app/components/header/header.component';
   templateUrl: './admin-home.page.html',
   styleUrls: ['./admin-home.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule ,IonicModule, CustomInputComponent, RouterLink, HeaderComponent]
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, CustomInputComponent, RouterLink, HeaderComponent]
 })
 export class AdminHomePage implements OnInit {
 

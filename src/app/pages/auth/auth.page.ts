@@ -7,7 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { CustomInputComponent } from 'src/app/components/custom-input/custom-input.component';
 import {  Router, RouterLink } from '@angular/router';
-import { User } from '../../model/user.model';
+
 import { UtilsService } from 'src/app/service/utils.service';
 @Component({
   selector: 'app-auth',
