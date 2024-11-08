@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { FirebaseService } from '../service/firebase.service';
+import { Injectable } from '@angular/core';
+
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { FirebaseService } from '../service/firebase.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,13 +16,21 @@ export class authGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> {
     const expectedRole = route.data['role'];
+
     return this.firebaseService.userRole$.pipe(
-      tap(role => {
+      map(role => {
         if (role !== expectedRole) {
-          this.router.navigate(['/home']);
+          // Redirigir solo si el rol no coincide y no es null
+          if (role) {
+            this.router.navigate(['/home']);
+            return false;
+          }
+          // Si no hay rol, redirigir a la página de autenticación
+          this.router.navigate(['/auth']);
+          return false;
         }
-      }),
-      map(role => role === expectedRole)
+        return true; // Permitir acceso
+      })
     );
   }
 }

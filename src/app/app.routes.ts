@@ -1,5 +1,7 @@
+import { adminGuardGuard } from './guard/admin-guard.guard';
 import { Routes } from '@angular/router';
 import { authGuard } from './guard/auth.guard';
+
 
 export const routes: Routes = [
  {
@@ -28,38 +30,40 @@ export const routes: Routes = [
     canActivate:[authGuard],
     data: { role: 'Student' }
   },
-  {
-    path: 'drives-home',
-    loadComponent: () => import('./pages/drives-home/drives-home.page').then( m => m.DrivesHomePage),
-    canActivate:[authGuard],
-    data: { role: 'Driver' }
-  },
+
   {
     path: 'admin-home',
     loadComponent: () => import('./pages/admin-home/admin-home.page').then( m => m.AdminHomePage),
-    canActivate:[authGuard],
+   canActivate:[adminGuardGuard],
     data: { role: 'Admin' }
   },
   {
     path: 'admin-list',
     loadComponent: () => import('./pages/admin-home/admin-list/admin-list.page').then( m => m.AdminListPage),
-    canActivate:[authGuard],
+   // canActivate:[adminGuardGuard],
     data: { role: 'Admin' }
   
   },
   {
     path: 'admin-register-chofer',
     loadComponent: () => import('./pages/admin-home/admin-register-chofer/admin-register-chofer.page').then( m => m.AdminRegisterChoferPage),
-    //canActivate:[authGuard],
-    //data: { role: 'Admin' }
+   //canActivate:[adminGuardGuard],
+   data: { role: 'Admin' }
   
   },
   {
     path: 'admin-payment-history',
     loadComponent: () => import('./pages/admin-home/admin-payment-history/admin-payment-history.page').then( m => m.AdminPaymentHistoryPage),
-    canActivate:[authGuard],
-    data: { role: 'Admin' }
+   //canActivate:[adminGuardGuard],
+   data: { role: 'Admin' }
   
+  },
+  {
+    path: 'driver-home',
+    loadComponent: () => import('./pages/driver-home/driver-home.page').then( m => m.DriverHomePage),
+    canActivate:[authGuard],
+    data: { role: 'Driver' }
   }
+
 
 ];

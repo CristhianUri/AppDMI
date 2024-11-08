@@ -15,13 +15,16 @@ export class UtilsService {
       spinner: 'crescent',
     });
   }
-  Alerta(header:string,message: string){
-    return this.alertCtrl.create({
-      header: header,
-      message: message,
-      buttons: ['OK']
+  async Alerta(header: string, message: string) {
+    const alert = await this.alertCtrl.create({
+        header: header, // Asegúrate de que este valor no sea indefinido
+        message: message,
+        buttons: ['OK']
     });
-  }
+
+    await alert.present(); // Presenta la alerta
+}
+
   async AlertaConOpciones(titulo: string, mensaje: string, onConfirm: () => void, onCancel: () => void) {
     const alert = await this.alertCtrl.create({
       header: titulo,

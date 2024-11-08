@@ -18,6 +18,7 @@ export class FirebaseService {
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
   private role$ = new BehaviorSubject<string | null>(null);
   private name$ = new BehaviorSubject<string | null>(null);
+  private balance$ = new BehaviorSubject<number | null>(null);
 
   get authenticated$() {
     return this.isLoggedIn$.asObservable();
@@ -27,6 +28,9 @@ export class FirebaseService {
     return this.role$.asObservable();
   }
 
+  get userBalance$(){
+    return this.balance$.asObservable();
+  }
   get userName$() {
     return this.name$.asObservable();
   }
@@ -98,35 +102,48 @@ export class FirebaseService {
     }
   }
 
-  // Método para obtener el usuario actual y su rol
   async getCurrentUser(userCredential: UserCredential): Promise<UserGeneric | null> {
-    const user = userCredential.user; 
+    const user = userCredential.user;
     if (user) {
-      try {
-        const uid = user.uid;
+      const uid = user.uid;
+      return await this.fetchUserDataByUid(uid);
+    }
+    this.isLoggedIn$.next(false);
+    return null; // Si no hay usuario autenticado
+  }
   
+  async fetchUserDataByUid(uid: string): Promise<UserGeneric | null> {
+    if (uid) {
+      try {
         const userSnap = await getDoc(doc(this.firestore, 'students', uid));
         if (userSnap.exists()) {
+          const data = userSnap.data();
           this.isLoggedIn$.next(true);
           this.role$.next('Student');
-          this.name$.next(userSnap.data()['name']);
-          return { ...userSnap.data(), uid: uid } as UserGeneric;
+          this.name$.next(data['name']);
+          this.balance$.next(data['saldo']);
+          return { ...data, uid: uid } as UserGeneric;
         }
   
+        // Repite para 'drivers' y 'admins'
         const driverSnap = await getDoc(doc(this.firestore, 'drivers', uid));
         if (driverSnap.exists()) {
+          const data = driverSnap.data();
           this.isLoggedIn$.next(true);
           this.role$.next('Driver');
-          this.name$.next(driverSnap.data()['name']);
-          return { ...driverSnap.data(), uid: uid } as UserGeneric;
+          this.name$.next(data['name']);
+          this.balance$.next(data['saldo']);
+          return { ...data, uid: uid } as UserGeneric;
         }
   
         const adminSnap = await getDoc(doc(this.firestore, 'admins', uid));
         if (adminSnap.exists()) {
+          const data = adminSnap.data();
           this.isLoggedIn$.next(true);
           this.role$.next('Admin');
-          this.name$.next(adminSnap.data()['name']);
-          return { ...adminSnap.data(), uid: uid } as UserGeneric;
+          this.name$.next(data['name']);
+          this.balance$.next(data['saldo']);
+          return { ...data, uid: uid } as UserGeneric;
         }
       } catch (error) {
         console.error('Error al obtener el usuario actual: ', error);
@@ -137,7 +154,6 @@ export class FirebaseService {
     this.name$.next(null);
     return null; // Si no hay usuario autenticado
   }
-  
   async login(email: string, password: string): Promise<void> {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
@@ -171,38 +187,21 @@ export class FirebaseService {
       // Almacenar en localStorage
       const uid = user.uid;
       
-      const userSnap = await getDoc(doc(this.firestore, 'students', uid));
-      if (userSnap.exists()) {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('role', 'Student');
-        localStorage.setItem('name', userSnap.data()['name']);
-        localStorage.setItem('uid', uid);
-        this.router.navigate(['/student-home']);
-        return;
-      }
-  
-      const driverSnap = await getDoc(doc(this.firestore, 'drivers', uid));
-      if (driverSnap.exists()) {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('role', 'Driver');
-        localStorage.setItem('name', driverSnap.data()['name']);
-        localStorage.setItem('uid', uid);
-        this.router.navigate(['/driver-home']);
-        return;
-      }
-  
-      const adminSnap = await getDoc(doc(this.firestore, 'admins', uid));
-      if (adminSnap.exists()) {
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('role', 'Admin');
-        localStorage.setItem('name', adminSnap.data()['name']);
-        localStorage.setItem('uid', uid);
-        this.router.navigate(['/admin-home']);
-        return;
-      }
+      const userData = await this.getCurrentUser(userCredential);
+    if (userData) {
+      // Aquí almacenas en localStorage y actualizas los observables
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('role', userData.rol);
+      localStorage.setItem('name', userData.name);
+      localStorage.setItem('uid', uid);
+      this.isLoggedIn$.next(true); // Actualiza el estado de autenticación
+      this.role$.next(userData.rol); // Establece el rol correspondiente
+      this.router.navigate([`/${userData.rol.toLowerCase()}-home`]); // Navegación basada en el rol
+    }
   
     } catch (error) {
-      console.error('Error en el inicio de sesión: ', error);
+console.log(error);
+await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     }
   }
   
@@ -214,6 +213,8 @@ export class FirebaseService {
     localStorage.removeItem('role');
     localStorage.removeItem('name');
     localStorage.removeItem('uid');
+    this.router.navigate(['/auth']); // Redirige a la página de autenticación
     return this.auth.signOut();
   }
+  
 }
