@@ -1,11 +1,13 @@
 <app-header cargo="Pasajero" title="Balance de tu cuenta" [menuItem]="menuItem"></app-header>
 <ion-router-outlet id="main-content"></ion-router-outlet>
-<ion-content [fullscreen]="true">
+
+<ion-content class="center-content">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">student-home</ion-title>
     </ion-toolbar>
   </ion-header>
+
   <ion-item style="padding: 5% 20% 0 20%;">
     <ion-avatar slot="start">
       <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
@@ -15,8 +17,15 @@
       <p>{{userRole}}</p>
     </ion-label>
   </ion-item>
-  <ion-img src="../../assets/icon/qr.png" alt="logo " style="height: 250px;"></ion-img>
-  <p class="ion-text-center" ><strong>Tu saldo disponible es de:</strong></p>
-  <h1 class="ion-text-center" ><strong>${{userBalance}}</strong></h1>
 
+  <!-- Contenedor centrado -->
+  <div class="center-content">
+    <ion-button (click)="generateQrCode()">Generar QR</ion-button>
+    <qrcode *ngIf="qrData" [qrdata]="qrData"></qrcode>
+  </div>
+
+  <!-- Información adicional -->
+ 
+  <p class="ion-text-center"><strong>Tu saldo disponible es de:</strong></p>
+  <h1 class="ion-text-center"><strong>${{userBalance}}</strong></h1>
 </ion-content>

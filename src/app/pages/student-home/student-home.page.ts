@@ -6,6 +6,7 @@ import { HeaderComponent } from 'src/app/components/header/header.component';
 import { IonicModule } from '@ionic/angular';
 import { FirebaseService } from '../../service/firebase.service';
 import { Router } from '@angular/router';
+import { QRCodeModule } from 'angularx-qrcode';
 
 
 @Component({
@@ -13,10 +14,11 @@ import { Router } from '@angular/router';
   templateUrl: './student-home.page.html',
   styleUrls: ['./student-home.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, HeaderComponent]
+  imports: [IonicModule, CommonModule, FormsModule, HeaderComponent, QRCodeModule]
 })
 export class StudentHomePage implements OnInit {
   title: string = 'Administrador';
+  qrData: string |  null = null;
   menuItem = [];
   userName: string | null = null;
   userRole: string = 'Estudiante';
@@ -40,5 +42,12 @@ export class StudentHomePage implements OnInit {
     } else {
       this.firebaseService.fetchUserDataByUid(uid); // Obtiene datos del usuario
     }
+  }
+  generateQrCode() {
+    const userId = localStorage.getItem('uid');
+    const localDate = new Date();
+    // Ajustar la fecha a la zona horaria local (México)
+    const timestamp = localDate.toLocaleString('en-US', { timeZone: 'America/Mexico_City' });
+    this.qrData = JSON.stringify({ userId, timestamp });
   }
 }
