@@ -20,7 +20,7 @@
 
   <!-- Contenedor centrado -->
   <div class="center-content">
-    <ion-button (click)="generateQrCode()">Generar QR</ion-button>
+    <ion-button expand="block" mode="ios" class="submit" color="tertiary" style="width: 200px;"  (click)="generateQrCode()"><strong>Generar QR</strong></ion-button>
     <qrcode *ngIf="qrData" [qrdata]="qrData"></qrcode>
   </div>
 

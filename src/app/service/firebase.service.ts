@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'; 
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, UserCredential } from '@angular/fire/auth';
-import { Firestore, doc, setDoc } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc,collection, query, where, getDocs, updateDoc } from '@angular/fire/firestore';
 import { UserGeneric } from './../model/user.model';
 import { getDoc } from 'firebase/firestore';
 import { Router } from '@angular/router';
@@ -13,6 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 export class FirebaseService {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  
   private router = inject(Router);
   private utilSvc = inject(UtilsService);
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -69,8 +70,10 @@ export class FirebaseService {
         await setDoc(doc(this.firestore, 'students', uid), {
           uid: uid,
           name: usergeneric.name,
+          email: usergeneric.email,
           rol: usergeneric.rol,
-          saldo: usergeneric.saldo
+          saldo: usergeneric.saldo,
+          fecha_Creacion: usergeneric.fecha 
         });
       } else if (usergeneric.rol === 'Driver') {
         await setDoc(doc(this.firestore, 'drivers', uid), {
@@ -97,8 +100,11 @@ export class FirebaseService {
       await this.utilSvc.Alerta('Correo de verificación', 'Se ha enviado un correo de verificación. Por favor, revisa tu bandeja de entrada.');
 
     } catch (error) {
-      console.error('Error en el registro: ' + error);
-      throw error;
+      if (error.code ==='auth/email-already-in-use' ) {
+        await this.utilSvc.Alerta('Correo en uso','Este correo ya esta en uso')
+      } else {
+        console.log('Error al resgistrar')
+      }
     }
   }
 
@@ -205,6 +211,7 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     }
   }
   
+  
   logout(): Promise<void> {
     this.isLoggedIn$.next(false);
     this.role$.next(null);
@@ -215,6 +222,32 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     localStorage.removeItem('uid');
     this.router.navigate(['/auth']); // Redirige a la página de autenticación
     return this.auth.signOut();
+  }
+
+  async recargarSaldo(email: string, saldo: number): Promise<void> {
+    try {
+      // 1. Crea la referencia a la colección y la consulta por email
+      const studentsCollection = collection(this.firestore, 'students');
+      const q = query(studentsCollection, where('email', '==', email));
+
+      // 2. Ejecuta la consulta
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Obtén el primer documento que coincida
+        const docRef = querySnapshot.docs[0].ref;
+        const data = querySnapshot.docs[0].data() as { saldo: number };
+
+        // 3. Actualiza el saldo
+        const nuevoSaldo = (data.saldo || 0) + saldo;
+        await updateDoc(docRef, { saldo: nuevoSaldo });
+        console.log(`Saldo actualizado. Nuevo saldo: ${nuevoSaldo}`);
+      } else {
+        console.error('Usuario no encontrado');
+      }
+    } catch (error) {
+      console.error('Error al recargar saldo:', error);
+    }
   }
   
 }

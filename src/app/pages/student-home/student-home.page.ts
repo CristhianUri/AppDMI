@@ -46,8 +46,13 @@ export class StudentHomePage implements OnInit {
   generateQrCode() {
     const userId = localStorage.getItem('uid');
     const localDate = new Date();
-    // Ajustar la fecha a la zona horaria local (México)
-    const timestamp = localDate.toLocaleString('en-US', { timeZone: 'America/Mexico_City' });
-    this.qrData = JSON.stringify({ userId, timestamp });
+  
+  // Ajustar la fecha a la zona horaria de México
+  const timestamp = localDate.toLocaleString('en-US', { timeZone: 'America/Mexico_City' });
+
+  // Convertir la fecha ajustada a un objeto Date
+
+  
+  this.qrData = JSON.stringify({ userId, timestamp });
   }
 }

@@ -46,19 +46,19 @@
                             <ion-img src="https://i.pravatar.cc/300?u=b"></ion-img>
                         </ion-avatar>
                         <ion-label>
-                            <h2>Connor Smith</h2>
-                            <p>a352111587alumno.utte</p>
+                            <h2>Email del usuario</h2>
+                            <p>{{form.value.email}}</p>
                         </ion-label>
                     </ion-item>
                 </ion-list>
-                <p class="ion-padding"><strong>De: [$150]</strong></p>
+                <p class="ion-padding"><strong>De: {{form.value.saldo}}</strong></p>
                 <ion-grid>
                     <ion-row class="ion-justify-content-between">
                         <ion-col>
                             <ion-button expand="block" color="danger" (click)="modal.dismiss()">Cancelar</ion-button>
                         </ion-col>
                         <ion-col>
-                            <ion-button expand="block" color="primary" (click)="modal.dismiss()">Confirmar</ion-button>
+                            <ion-button expand="block" color="primary" (click)="submit()">Confirmar</ion-button>
                         </ion-col>
                     </ion-row>
                 </ion-grid>
