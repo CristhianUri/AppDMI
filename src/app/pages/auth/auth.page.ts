@@ -2,19 +2,20 @@ import { FirebaseService } from './../../service/firebase.service';
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, FormGroup, FormsModule, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+
 import { ReactiveFormsModule } from '@angular/forms';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { CustomInputComponent } from 'src/app/components/custom-input/custom-input.component';
 import {  Router, RouterLink } from '@angular/router';
 
 import { UtilsService } from 'src/app/service/utils.service';
+import { IonContent,IonIcon,IonImg,IonText,IonButton } from '@ionic/angular/standalone';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.page.html',
   styleUrls: ['./auth.page.scss'],
   standalone: true,
-  imports: [ ReactiveFormsModule,IonicModule, CommonModule, FormsModule,HeaderComponent,CustomInputComponent,RouterLink]
+  imports: [ IonContent,IonIcon,IonImg,IonText,IonButton,ReactiveFormsModule, CommonModule, FormsModule,CustomInputComponent,RouterLink]
 })
 export class AuthPage implements OnInit {
 
@@ -29,22 +30,26 @@ export class AuthPage implements OnInit {
   constructor(private router: Router) { }
 
   ngOnInit() {
+    console.log("se cargo componente");
   }
   async submit(){
+    console.log("se presiono el boton");
     if (this.form.valid) {
+      console.log("if");
+      
       const email = this.form.value.email;
       const password = this.form.value.password;
-      const loading = await this.utilSvs.loading('Iniciando sesión');
-      loading.present();
+      console.log(email+ ' '+password);
+     /* const loading = await this.utilSvs.loading('Iniciando sesión');
+      loading.present()*/
       try {
+        console.log("dentro del try");
         await this.firebaseSvc.login(email,password );
       } catch (error) {
         console.log('error '+ error);
-      }finally{
-        loading.dismiss();
       }
     }else{
-      
+      console.log("else");
     }
   }
 

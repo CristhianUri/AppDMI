@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 import { FirebaseService } from './../../../service/firebase.service';
 import { UserGeneric } from './../../../model/user.model';
 import { AlertController } from '@ionic/angular';
+import { IonContent, IonIcon, IonImg, IonText, IonButton } from '@ionic/angular/standalone';
 
 
 
@@ -18,7 +19,7 @@ import { AlertController } from '@ionic/angular';
   templateUrl: './sing-up.page.html',
   styleUrls: ['./sing-up.page.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, ReactiveFormsModule,CustomInputComponent]
+  imports: [IonContent,IonIcon,IonImg,IonText,IonButton, CommonModule, ReactiveFormsModule,CustomInputComponent]
 })
 export class SingUpPage implements OnInit {
   form = new FormGroup ({

@@ -1,0 +1,41 @@
+<ion-menu contentId="main-content">
+  <ion-toolbar>
+    <ion-title class="ion-text-center ion-padding">
+      <div class="admin">Q R T R A N S P O R T</div>
+    </ion-title>
+    <ion-img src="../../assets/icon/LogoSIN.png" alt="logo" style="height: 200px;"></ion-img>
+    <ion-title class="ion-text-center">
+      <strong>{{ cargo }}</strong>
+    </ion-title>
+  </ion-toolbar>
+
+  <ion-content>
+    <ion-list class="ion-padding" lines="none">
+      <ion-item button [routerLink]="'/admin-home'">
+        <ion-label>Recargar</ion-label>
+      </ion-item>
+      <ion-item button [routerLink]="'/admin-payment-history'">
+        <ion-label>Historial de recargas</ion-label>
+      </ion-item>
+      <ion-item button [routerLink]="'/admin-register-chofer'">
+        <ion-label>Registrar</ion-label>
+      </ion-item>
+      <ion-item button [routerLink]="'/admin-list'">
+        <ion-label>Lista de conductores</ion-label>
+      </ion-item>
+      <ion-item button (click)="signout()">
+        Cerrar sesión
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<ion-header>
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center">{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+

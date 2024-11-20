@@ -170,4 +170,24 @@ ion-button {
     justify-content: center;
     
   }
+  .loading-container {
+    display: flex;
+    justify-content: center;  /* Centra horizontalmente */
+    align-items: center;      /* Centra verticalmente */
+               /* Ocupa toda la altura de la ventana */
+  }
+  .scanner {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border: 2px solid #000;
+  }
   
+  .notification {
+    background-color: #f0f8ff;
+    color: #000;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+  }

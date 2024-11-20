@@ -40,30 +40,31 @@ export const routes: Routes = [
   {
     path: 'admin-list',
     loadComponent: () => import('./pages/admin-home/admin-list/admin-list.page').then( m => m.AdminListPage),
-   // canActivate:[adminGuardGuard],
+   canActivate:[adminGuardGuard],
     data: { role: 'Admin' }
   
   },
   {
     path: 'admin-register-chofer',
     loadComponent: () => import('./pages/admin-home/admin-register-chofer/admin-register-chofer.page').then( m => m.AdminRegisterChoferPage),
-   //canActivate:[adminGuardGuard],
+   canActivate:[adminGuardGuard],
    data: { role: 'Admin' }
   
   },
-  {
-    path: 'admin-payment-history',
-    loadComponent: () => import('./pages/admin-home/admin-payment-history/admin-payment-history.page').then( m => m.AdminPaymentHistoryPage),
-   //canActivate:[adminGuardGuard],
-   data: { role: 'Admin' }
-  
-  },
+
   {
     path: 'driver-home',
     loadComponent: () => import('./pages/driver-home/driver-home.page').then( m => m.DriverHomePage),
     canActivate:[authGuard],
     data: { role: 'Driver' }
+  },
+  {
+    path: 'history-payment',
+    loadComponent: () => import('./pages/admin-home/history-payment/history-payment.page').then( m => m.HistoryPaymentPage),
+    canActivate:[adminGuardGuard],
+   data: { role: 'Admin' }
   }
+
 
 
 ];

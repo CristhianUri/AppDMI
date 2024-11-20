@@ -1,8 +1,8 @@
-<app-header cargo="Administrador" title="Registrar"[menuItem]="[
+<app-header cargo="Administrador" title="Registrar" [menuItem]="[
 { title: 'Recargar', route: '/admin-home' },
-{ title: 'Historial de recargas', route: '/admin-payment-history' },
+{ title: 'Historial de recargas', route: '/history-payment' },
 { title: 'Registrar', route: '/admin-register-chofer' },
-{ title: 'Lista de conductores', route: '/admin-list' }
+{ title: 'Lista de conductores', route: '/admin-list' },
 ]"></app-header>
 <ion-router-outlet id="main-content"></ion-router-outlet>
 <!-- Contenido de la pantalla -->
@@ -11,7 +11,7 @@
 
     <ion-content class="ion-padding">
       <div style="padding-top: 50px;">
-        <p class="ion-text-center">Adiministrador: </p>
+        <p class="ion-text-center">Adiministrador: {{userName}} </p>
       </div>
       <!-- Formulario para recargar -->
       <div class="d-flex-center">

@@ -9,7 +9,7 @@ export class UtilsService {
   loadingCtrl = inject(LoadingController);
   toastCtrl = inject (ToastController);
   alertCtrl = inject(AlertController);
-  loading(message: string){
+ async loading(message: string){
     return this.loadingCtrl.create({
       message: message,
       spinner: 'crescent',

@@ -9,13 +9,15 @@ import { FirebaseService } from 'src/app/service/firebase.service';
 import { UtilsService } from 'src/app/service/utils.service';
 import { UserGeneric } from 'src/app/model/user.model';
 
+import { IonSelectOption,IonContent, IonRouterOutlet, IonButton, IonItem, IonLabel } from '@ionic/angular/standalone';
+
 
 @Component({
   selector: 'app-admin-register-chofer',
   templateUrl: './admin-register-chofer.page.html',
   styleUrls: ['./admin-register-chofer.page.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, IonicModule, CustomInputComponent, RouterLink, HeaderComponent]
+  imports: [IonSelectOption,IonContent,IonRouterOutlet,IonButton,IonItem,IonLabel,CommonModule, FormsModule, ReactiveFormsModule, CustomInputComponent, HeaderComponent]
 })
 export class AdminRegisterChoferPage implements OnInit {
 
@@ -32,32 +34,31 @@ export class AdminRegisterChoferPage implements OnInit {
 
   title: string = 'Recargar';
   menuItem = [
-    {title:'inicio',route:'/admin-home'},
-    { title: 'Historial de recargas', route: '/admin-payment-history' },
-    { title: 'Registrar', route: '/admin-register-chofer' },
-    { title: 'Lista de conductores', route: '/admin-list' },
-
+   
     // Agrega más elementos específicos para esta página
   ];
-  constructor(private router: Router, private alertCtrl: AlertController) { }
+  userName: string | null = null;
+  constructor(private router: Router, private alertCtrl: AlertController,private  firebaseService2: FirebaseService) { }
 
   ngOnInit() {
-  // Verificar si el usuario está autenticado
-  const uid = localStorage.getItem('uid'); // Obtener el uid del localStorage
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const role = localStorage.getItem('role')
-  if (!isLoggedIn && !uid && !role) {
-    this.router.navigate(['/auth']); // Redirige a la página de autenticación si no está autenticado
-  } else {
-    this.firebaseService.fetchUserDataByUid(uid); // Obtiene datos del usuario
+    this.firebaseService2.userName$.subscribe(name => this.userName = name);
+    // Verificar si el usuario está autenticado
+    
+    const uid = localStorage.getItem('uid'); // Obtener el uid del localStorage
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    const role = localStorage.getItem('role')
+    if (!isLoggedIn && !uid && !role) {
+      this.router.navigate(['/auth']); // Redirige a la página de autenticación si no está autenticado
+    } else {
+      this.firebaseService.fetchUserDataByUid(uid); // Obtiene datos del usuario
+    }
   }
-   }
 
   async onSubmit() {
     if (this.form.valid) {
       console.log('Formulario enviado', this.form.value);
       // Aquí puedes realizar la lógica de envío del formulario
-      
+
       const userGeneric: UserGeneric = {
         uid: '',
         name: this.form.value.name,
@@ -69,16 +70,16 @@ export class AdminRegisterChoferPage implements OnInit {
         telefono: Number(this.form.value.telefono)
       }
       const loading = await this.utilSvc.loading('Registrando');
-    loading.present();
-    try {
-      await this.firebaseService.registerUser(userGeneric);
-      
-    } catch (error) {
-      await this.presentAlert("Email ya se encuentra en uso");
-    }finally{
-      loading.dismiss();
-    }
-  
+      loading.present();
+      try {
+        await this.firebaseService.registerUser(userGeneric);
+
+      } catch (error) {
+        await this.presentAlert("Email ya se encuentra en uso");
+      } finally {
+        loading.dismiss();
+      }
+
     } else {
       await this.presentAlert("Porfacor llena todos los campos");
       return

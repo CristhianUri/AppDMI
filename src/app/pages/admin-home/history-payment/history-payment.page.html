@@ -1,0 +1,32 @@
+<ion-app>
+  <app-header [menuItem]="menuItem" [title]="title"></app-header>
+    <ion-router-outlet id="main-content"></ion-router-outlet>
+    <ion-content [fullscreen]="true">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="6" *ngFor="let recarga of recargas">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>{{ recarga.email }}</ion-card-title>
+                <ion-card-subtitle>
+                  Fecha: {{ recarga.fecha?.toDate() | date: 'short' }}
+                </ion-card-subtitle>
+              </ion-card-header>
+              <ion-card-content>
+                <p>Monto: ${{ recarga.monto }}</p>
+                <p>Recargado por: {{ recarga.recargadoPor.email }}</p>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    
+      <!-- Botón de carga para paginación -->
+      <ion-button expand="block" (click)="loadRecargas()" [disabled]="loading || noMoreData">
+        {{ noMoreData ? 'No hay más recargas' : loading ? 'Cargando...' : 'Cargar más' }}
+      </ion-button>
+    </ion-content>
+</ion-app>
+
+
+

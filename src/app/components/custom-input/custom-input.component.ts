@@ -5,13 +5,14 @@ import { FormControl } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
 import {arrowBackOutline, personCircle} from 'ionicons/icons'
+import { IonContent, IonItem, IonImg, IonButton,IonIcon,IonInput } from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-custom-input',
   templateUrl: './custom-input.component.html',
   styleUrls: ['./custom-input.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule,ReactiveFormsModule ]
+  imports: [IonContent,IonItem,IonImg,IonButton,IonIcon,IonInput,CommonModule,ReactiveFormsModule ]
 })
 export class CustomInputComponent  implements OnInit {
 

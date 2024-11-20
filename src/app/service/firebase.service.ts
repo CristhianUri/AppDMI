@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core'; 
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, UserCredential } from '@angular/fire/auth';
-import { Firestore, doc, setDoc,collection, query, where, getDocs, updateDoc } from '@angular/fire/firestore';
+import { Firestore,orderBy,limit,startAfter,deleteDoc, doc,addDoc, setDoc,collection, query, where, getDocs, updateDoc } from '@angular/fire/firestore';
 import { UserGeneric } from './../model/user.model';
 import { getDoc } from 'firebase/firestore';
 import { Router } from '@angular/router';
@@ -50,7 +50,7 @@ export class FirebaseService {
       this.role$.next(role);
       this.name$.next(name);
       // Navega a la ruta correspondiente según el rol
-      this.router.navigate([`/${role.toLowerCase()}-home`]);
+     this.router.navigate([`/${role.toLowerCase()}-home`]);
     }
   }
 
@@ -223,31 +223,112 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     this.router.navigate(['/auth']); // Redirige a la página de autenticación
     return this.auth.signOut();
   }
-
-  async recargarSaldo(email: string, saldo: number): Promise<void> {
+/// recargar saldo
+  async recargarSaldo(email: string, saldo: number, modal?: any): Promise<void> {
     try {
-      // 1. Crea la referencia a la colección y la consulta por email
+      // Obtén el usuario autenticado que realiza la recarga
+      const currentUser = this.auth.currentUser;
+  
+      if (!currentUser) {
+        console.error('No hay un usuario autenticado realizando la operación');
+        return;
+      }
+  
+      // Referencia a la colección 'students' y consulta por email
       const studentsCollection = collection(this.firestore, 'students');
       const q = query(studentsCollection, where('email', '==', email));
-
-      // 2. Ejecuta la consulta
+  
+      // Ejecuta la consulta
       const querySnapshot = await getDocs(q);
-
+  
       if (!querySnapshot.empty) {
         // Obtén el primer documento que coincida
         const docRef = querySnapshot.docs[0].ref;
         const data = querySnapshot.docs[0].data() as { saldo: number };
-
-        // 3. Actualiza el saldo
+  
+        // Actualiza el saldo
         const nuevoSaldo = (data.saldo || 0) + saldo;
         await updateDoc(docRef, { saldo: nuevoSaldo });
         console.log(`Saldo actualizado. Nuevo saldo: ${nuevoSaldo}`);
+  
+        // Registra la recarga en la colección 'recargas'
+        const recargasCollection = collection(this.firestore, 'recargas');
+        const recargaDoc = {
+          email, // Email del usuario recargado
+          monto: saldo, // Monto recargado
+          fecha: new Date(), // Fecha y hora de la recarga
+          recargadoPor: {
+            
+            uid: currentUser.uid, // UID del usuario que realizó la recarga
+            email: currentUser.email, // Correo del usuario que realizó la recarga
+          },
+        };
+  
+        await addDoc(recargasCollection, recargaDoc);
+        console.log('Recarga registrada correctamente');
+  
+        // Muestra un mensaje de confirmación
+        
+  
+      
       } else {
         console.error('Usuario no encontrado');
+        await this.utilSvc.Alerta('Exito','El usuario no fue encontrado.');
       }
     } catch (error) {
       console.error('Error al recargar saldo:', error);
+      await this.utilSvc.Alerta('Exito','Ocurrió un error al realizar la recarga.');
     }
   }
-  
+ // FirebaseService (por ejemplo)
+ async getAllUsers(collectionName: string) {
+  try {
+    const userCollection = collection(this.firestore, collectionName);
+    const querySnapshot = await getDocs(userCollection);
+    
+    // Aquí asegúrate de devolver los datos correctos con uid
+    const users = querySnapshot.docs.map(doc => {
+      const userData = doc.data();
+      return { ...userData, uid: doc.id }; // Añadimos 'uid' manualmente desde el ID del documento
+    });
+
+    return users;
+  } catch (error) {
+    console.error('Error al obtener usuarios:', error);
+    throw error;
+  }
+}
+
+  /**
+   * Elimina un documento de una colección.
+   * @param collectionName Nombre de la colección.
+   * @param docId ID del documento a eliminar.
+   */
+  async deleteDocument(collectionName: string, docId: string) {
+    const docRef = doc(this.firestore, `${collectionName}/${docId}`);
+    await deleteDoc(docRef);
+  }
+  // obtener recargas 
+  async getRecargasPaginadas(lastDoc: any = null): Promise<{ recargas: any[], lastVisible: any }> {
+    try {
+      const recargasCollection = collection(this.firestore, 'recargas');
+      let q = query(recargasCollection, orderBy('fecha', 'desc'), limit(5)); // Ordena y limita
+      
+      if (lastDoc) {
+        q = query(recargasCollection, orderBy('fecha', 'desc'), startAfter(lastDoc), limit(5)); // Añade paginación
+      }
+
+      const querySnapshot = await getDocs(q);
+      const recargas = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1]; // Último documento visible
+      return { recargas, lastVisible };
+    } catch (error) {
+      console.error('Error al obtener recargas paginadas:', error);
+      throw error;
+    }
+  }
 }

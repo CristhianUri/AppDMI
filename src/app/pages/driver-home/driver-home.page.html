@@ -1,10 +1,25 @@
 <app-header cargo="Conductor" title="Conductor" [menuItem]="menuItem"></app-header>
 <ion-router-outlet id="main-content"></ion-router-outlet>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">drives-home</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="center-content">
+  <button (click)="startScan(5)">Cobrar 5 pesos</button>
+  <button (click)="startScan(6)">Cobrar 6 pesos</button>
+  
+  <!-- Scanner QR: Solo se muestra si scannerActive es true -->
+  <zxing-scanner
+    *ngIf="scannerActive"
+    (scanSuccess)="onScanSuccess($event)"
+    [formats]="allowedFormats">
+  </zxing-scanner>
+  
+  <!-- Botón para detener el escáner -->
+  <button *ngIf="showStopButton" (click)="stopScan()">Detener escáner</button>
+
+  <!-- Botón para escanear QR con la cámara -->
+  <button (click)="scanQRCodeWithCamera()">Escanear con la cámara</button>
+  
+  <!-- Muestra la notificación si hay un mensaje -->
+  <div *ngIf="notificationMessage" class="notification">
+    {{ notificationMessage }}
+  </div>
 </ion-content>
