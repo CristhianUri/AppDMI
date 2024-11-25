@@ -6,7 +6,7 @@ import {  Router } from '@angular/router';
 import { CobroSubjectService } from 'src/app/service/cobro-subject.service';
 import { QrScannerServiceService } from 'src/app/service/qr-scanner-service.service';
 import { NotificationServicesService } from '../../service/notification-services.service';
-import { IonContent, IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import { IonContent, IonApp, IonRouterOutlet,IonButton } from '@ionic/angular/standalone';
 import {  ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library'; 
 import { Firestore,collection,doc,getDoc,addDoc,updateDoc } from '@angular/fire/firestore';
@@ -17,7 +17,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';  // 
   templateUrl: './driver-home.page.html',
   styleUrls: ['./driver-home.page.scss'],
   standalone: true,
-  imports: [ZXingScannerModule,IonContent,IonRouterOutlet , CommonModule, FormsModule,HeaderComponent]
+  imports: [ZXingScannerModule,IonContent,IonRouterOutlet , CommonModule, FormsModule,HeaderComponent,IonContent,IonButton]
 })
 export class DriverHomePage implements OnInit {
   title: string = 'Administrador';
@@ -68,28 +68,27 @@ export class DriverHomePage implements OnInit {
 
   // Método para manejar el éxito del escaneo
   onScanSuccess(result: string) {
+    this.stopScan(); // Detener el escáner inmediatamente
     console.log('QR escaneado exitosamente:', result);
   
-    // Parsear el resultado del QR, que está en formato JSON
-    const qrData = JSON.parse(result); 
+    try {
+      const qrData = JSON.parse(result);
+      const qrTimestamp = new Date(qrData.timestamp);
+      const currentTimestamp = new Date();
   
-    // Obtener la fecha y hora del timestamp en el QR
-    const qrTimestamp = new Date(qrData.timestamp);
-    const currentTimestamp = new Date();
-    
-    // Validar si han pasado más de 30 minutos desde que se generó el QR
-    const timeDifference = (currentTimestamp.getTime() - qrTimestamp.getTime()) / (1000 * 60); // Convertir a minutos
+      const timeDifference = (currentTimestamp.getTime() - qrTimestamp.getTime()) / (1000 * 60);
   
-    if (timeDifference > 30) {
-      // Si han pasado más de 30 minutos, muestra un mensaje de error
-      console.log('El QR ha expirado. Han pasado más de 30 minutos.');
-      this.notificacionService.sendNotification('El QR ha expirado. Han pasado más de 30 minutos.');
-      return;
+      if (timeDifference > 30) {
+        console.log('El QR ha expirado. Han pasado más de 30 minutos.');
+        this.notificacionService.sendNotification('El QR ha expirado. Han pasado más de 30 minutos.');
+        return;
+      }
+  
+      console.log('QR válido. Procediendo con el cobro...');
+      this.handlePayment(qrData.userId);
+    } catch (error) {
+      console.error('Error al procesar el QR:', error);
     }
-  
-    // Si el QR es válido, continuar con el pago
-    console.log('QR válido. Procediendo con el cobro...');
-    this.handlePayment(qrData.userId); // Llamar a handlePayment solo con el userId
   }
   
   // Método para manejar el cobro según el monto seleccionado (5 o 6 pesos)
@@ -119,31 +118,36 @@ export class DriverHomePage implements OnInit {
         await addDoc(cobroRef, {
           studentId,
           amount: this.selectedAmount,
-          driverId: 'choferId', // ID del chofer, debes reemplazarlo con el real
-          date: new Date().toISOString()
+          driverId: 'choferId', // ID del chofer
+          date: new Date().toISOString(),
         });
   
-        // Notificación de éxito
-        await this.createNotification(studentId, `Se descontaron ${this.selectedAmount} pesos de tu saldo.`);
-      
-        
+        // Crear una notificación de éxito solo una vez
+        await this.createNotification(
+          studentId,
+          `Se descontaron ${this.selectedAmount} pesos de tu saldo.`
+        );
+  
         console.log('Pago realizado exitosamente');
         this.scannerActive = false;
       } else {
         // Notificación de saldo insuficiente
-        this.notificacionService.sendNotification('Saldo insuficiente');
+        if (!this.notificationMessage.includes('Saldo insuficiente')) {
+          this.notificacionService.sendNotification('Saldo insuficiente');
+        }
         console.log('Saldo insuficiente');
         this.scannerActive = false;
       }
     } else {
       // Notificación de estudiante no encontrado
-      
-      this.notificacionService.sendNotification('Estudiante no encontrado');
+      if (!this.notificationMessage.includes('Estudiante no encontrado')) {
+        this.notificacionService.sendNotification('Estudiante no encontrado');
+      }
       console.log('Estudiante no encontrado');
       this.scannerActive = false;
     }
   }
-
+  
   // Método para usar la cámara de Capacitor
   async scanQRCodeWithCamera() {
     try {

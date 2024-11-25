@@ -42,7 +42,7 @@ export class StudentHomePage implements OnInit {
       this.userBalance = balance !== null ? balance : Number(localStorage.getItem('balance'));
     });
 
-    const studentId = localStorage.getItem('uid');
+   /* const studentId = localStorage.getItem('uid');
     if (studentId) {
       // Escucha notificaciones en tiempo real
       this.notificationService.listenForNotifications(studentId);
@@ -52,9 +52,33 @@ export class StudentHomePage implements OnInit {
           this.showAlert(notifications[0].message, notifications[0].id);
         }
       });
+    }*/
+    const studentId = localStorage.getItem('uid');
+    if (studentId) {
+      // Escucha las notificaciones en tiempo real para el estudiante
+      this.notificationService.listenForNotifications(studentId);
+  
+      this.notificationService.notificaciones$.subscribe((notificaciones) => {
+        // Mostrar solo una alerta a la vez
+        if (notificaciones.length > 0) {
+          const latestNotification = notificaciones[0]; // La notificación más reciente
+          if (!this.isNotificationDisplayed(latestNotification.id)) {
+            this.showAlert(latestNotification.message, latestNotification.id);
+          }
+        }
+      });
     }
   }
+// Controla si una notificación ya fue mostrada
+private displayedNotifications: Set<string> = new Set();
 
+isNotificationDisplayed(notificationId: string): boolean {
+  if (this.displayedNotifications.has(notificationId)) {
+    return true;
+  }
+  this.displayedNotifications.add(notificationId);
+  return false;
+}
 
 
   generateQrCode() {

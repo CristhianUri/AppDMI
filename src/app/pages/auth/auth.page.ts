@@ -40,13 +40,15 @@ export class AuthPage implements OnInit {
       const email = this.form.value.email;
       const password = this.form.value.password;
       console.log(email+ ' '+password);
-     /* const loading = await this.utilSvs.loading('Iniciando sesión');
-      loading.present()*/
+     const loading = await this.utilSvs.loading('Iniciando sesión');
+      loading.present()
       try {
         console.log("dentro del try");
         await this.firebaseSvc.login(email,password );
       } catch (error) {
         console.log('error '+ error);
+      }finally {
+        loading.dismiss();
       }
     }else{
       console.log("else");
@@ -55,5 +57,12 @@ export class AuthPage implements OnInit {
 
   goBack() {
     this.router.navigate(['/home']); // Cambia '/home' por la ruta de tu página de inicio
+  }
+  async pruebaToast() {
+    const toast = await this.utilSvs.toastCtrl.create({
+      message: 'Prueba de Toast',
+      duration: 2000
+    });
+    await toast.present();
   }
 }

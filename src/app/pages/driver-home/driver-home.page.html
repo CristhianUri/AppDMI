@@ -2,24 +2,34 @@
 <ion-router-outlet id="main-content"></ion-router-outlet>
 
 <ion-content class="center-content">
-  <button (click)="startScan(5)">Cobrar 5 pesos</button>
-  <button (click)="startScan(6)">Cobrar 6 pesos</button>
-  
-  <!-- Scanner QR: Solo se muestra si scannerActive es true -->
-  <zxing-scanner
-    *ngIf="scannerActive"
-    (scanSuccess)="onScanSuccess($event)"
-    [formats]="allowedFormats">
-  </zxing-scanner>
-  
-  <!-- Botón para detener el escáner -->
-  <button *ngIf="showStopButton" (click)="stopScan()">Detener escáner</button>
 
-  <!-- Botón para escanear QR con la cámara -->
-  <button (click)="scanQRCodeWithCamera()">Escanear con la cámara</button>
-  
+
+
+  <!-- Scanner QR: Solo se muestra si scannerActive es true -->
+<div class="center-content2">
+  <ion-button mode="ios"  color="tertiary" (click)="startScan(5)">Cobrar 5 pesos</ion-button>
+    <ion-button mode="ios" color="tertiary" (click)="startScan(6)">Cobrar 6 pesos</ion-button>
+
+</div>
+  <div class="center-content">
+    
+    <zxing-scanner *ngIf="scannerActive" (scanSuccess)="onScanSuccess($event)" [formats]="allowedFormats">
+    </zxing-scanner>
+    <ion-button mode="ios" expand="block" color="tertiary" *ngIf="showStopButton" (click)="stopScan()">Detener
+      escáner</ion-button>
+  </div>
+
+  <!-- Botón para detener el escáner -->
+
+
+  <!-- Botón para escanear QR con la cámara 
+    <button (click)="scanQRCodeWithCamera()">Escanear con la cámara</button>-->
+
   <!-- Muestra la notificación si hay un mensaje -->
   <div *ngIf="notificationMessage" class="notification">
     {{ notificationMessage }}
   </div>
+
+
+
 </ion-content>

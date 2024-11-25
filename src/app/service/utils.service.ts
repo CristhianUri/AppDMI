@@ -10,19 +10,23 @@ export class UtilsService {
   toastCtrl = inject (ToastController);
   alertCtrl = inject(AlertController);
  async loading(message: string){
+  console.log("creando loading");
     return this.loadingCtrl.create({
       message: message,
       spinner: 'crescent',
     });
   }
+
   async Alerta(header: string, message: string) {
+    console.log("Creando alert")
     const alert = await this.alertCtrl.create({
         header: header, // Asegúrate de que este valor no sea indefinido
         message: message,
         buttons: ['OK']
     });
-
+    console.log("presentatodo alert")
     await alert.present(); // Presenta la alerta
+    
 }
 
   async AlertaConOpciones(titulo: string, mensaje: string, onConfirm: () => void, onCancel: () => void) {
