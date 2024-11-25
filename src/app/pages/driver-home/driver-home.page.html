@@ -3,7 +3,7 @@
 
 <ion-content class="center-content">
 
-
+<h1>{{dsaldo2}}</h1>
 
   <!-- Scanner QR: Solo se muestra si scannerActive es true -->
 <div class="center-content2">
@@ -12,7 +12,7 @@
 
 </div>
   <div class="center-content">
-    
+
     <zxing-scanner *ngIf="scannerActive" (scanSuccess)="onScanSuccess($event)" [formats]="allowedFormats">
     </zxing-scanner>
     <ion-button mode="ios" expand="block" color="tertiary" *ngIf="showStopButton" (click)="stopScan()">Detener
@@ -22,7 +22,7 @@
   <!-- Botón para detener el escáner -->
 
 
-  <!-- Botón para escanear QR con la cámara 
+  <!-- Botón para escanear QR con la cámara
     <button (click)="scanQRCodeWithCamera()">Escanear con la cámara</button>-->
 
   <!-- Muestra la notificación si hay un mensaje -->

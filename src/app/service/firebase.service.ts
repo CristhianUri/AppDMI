@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core'; 
+import { inject, Injectable } from '@angular/core';
 import { Auth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, UserCredential } from '@angular/fire/auth';
 import { Firestore,orderBy,limit,startAfter,deleteDoc, doc,addDoc, setDoc,collection, query, where, getDocs, updateDoc } from '@angular/fire/firestore';
 import { UserGeneric } from './../model/user.model';
@@ -13,7 +13,7 @@ import { BehaviorSubject } from 'rxjs';
 export class FirebaseService {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
-  
+
   private router = inject(Router);
   private utilSvc = inject(UtilsService);
   private isLoggedIn$ = new BehaviorSubject<boolean>(false);
@@ -73,7 +73,7 @@ export class FirebaseService {
           email: usergeneric.email,
           rol: usergeneric.rol,
           saldo: usergeneric.saldo,
-          fecha_Creacion: usergeneric.fecha 
+          fecha_Creacion: usergeneric.fecha
         });
       } else if (usergeneric.rol === 'Driver') {
         await setDoc(doc(this.firestore, 'drivers', uid), {
@@ -117,7 +117,7 @@ export class FirebaseService {
     this.isLoggedIn$.next(false);
     return null; // Si no hay usuario autenticado
   }
-  
+
   async fetchUserDataByUid(uid: string): Promise<UserGeneric | null> {
     if (uid) {
       try {
@@ -130,7 +130,7 @@ export class FirebaseService {
           this.balance$.next(data['saldo']);
           return { ...data, uid: uid } as UserGeneric;
         }
-  
+
         // Repite para 'drivers' y 'admins'
         const driverSnap = await getDoc(doc(this.firestore, 'drivers', uid));
         if (driverSnap.exists()) {
@@ -141,7 +141,7 @@ export class FirebaseService {
           this.balance$.next(data['saldo']);
           return { ...data, uid: uid } as UserGeneric;
         }
-  
+
         const adminSnap = await getDoc(doc(this.firestore, 'admins', uid));
         if (adminSnap.exists()) {
           const data = adminSnap.data();
@@ -164,7 +164,7 @@ export class FirebaseService {
     try {
       const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
       const user = userCredential.user;
-  
+
       // Comprobar si el correo está verificado
       if (!user.emailVerified) {
         // Mostrar alerta personalizada
@@ -181,18 +181,18 @@ export class FirebaseService {
             console.log('El usuario no desea reenviar el correo.');
           }
         );
-  
+
         // Cerrar sesión antes de mostrar la alerta
         await this.auth.signOut();
         return; // Salir del método
       }
-  
+
       // Solo si el correo está verificado, procedemos a obtener el usuario actual
-      await this.getCurrentUser(userCredential); 
-  
+      await this.getCurrentUser(userCredential);
+
       // Almacenar en localStorage
       const uid = user.uid;
-      
+
       const userData = await this.getCurrentUser(userCredential);
     if (userData) {
       // Aquí almacenas en localStorage y actualizas los observables
@@ -204,14 +204,14 @@ export class FirebaseService {
       this.role$.next(userData.rol); // Establece el rol correspondiente
       this.router.navigate([`/${userData.rol.toLowerCase()}-home`]); // Navegación basada en el rol
     }
-  
+
     } catch (error) {
 console.log(error);
 await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     }
   }
-  
-  
+
+
   logout(): Promise<void> {
     this.isLoggedIn$.next(false);
     this.role$.next(null);
@@ -228,29 +228,29 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     try {
       // Obtén el usuario autenticado que realiza la recarga
       const currentUser = this.auth.currentUser;
-  
+
       if (!currentUser) {
         console.error('No hay un usuario autenticado realizando la operación');
         return;
       }
-  
+
       // Referencia a la colección 'students' y consulta por email
       const studentsCollection = collection(this.firestore, 'students');
       const q = query(studentsCollection, where('email', '==', email));
-  
+
       // Ejecuta la consulta
       const querySnapshot = await getDocs(q);
-  
+
       if (!querySnapshot.empty) {
         // Obtén el primer documento que coincida
         const docRef = querySnapshot.docs[0].ref;
         const data = querySnapshot.docs[0].data() as { saldo: number };
-  
+
         // Actualiza el saldo
         const nuevoSaldo = (data.saldo || 0) + saldo;
         await updateDoc(docRef, { saldo: nuevoSaldo });
         console.log(`Saldo actualizado. Nuevo saldo: ${nuevoSaldo}`);
-  
+
         // Registra la recarga en la colección 'recargas'
         const recargasCollection = collection(this.firestore, 'recargas');
         const recargaDoc = {
@@ -258,19 +258,19 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
           monto: saldo, // Monto recargado
           fecha: new Date(), // Fecha y hora de la recarga
           recargadoPor: {
-            
+
             uid: currentUser.uid, // UID del usuario que realizó la recarga
             email: currentUser.email, // Correo del usuario que realizó la recarga
           },
         };
-  
+
         await addDoc(recargasCollection, recargaDoc);
         console.log('Recarga registrada correctamente');
-  
+
         // Muestra un mensaje de confirmación
-        
-  
-      
+
+
+
       } else {
         console.error('Usuario no encontrado');
         await this.utilSvc.Alerta('Exito','El usuario no fue encontrado.');
@@ -285,7 +285,7 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
   try {
     const userCollection = collection(this.firestore, collectionName);
     const querySnapshot = await getDocs(userCollection);
-    
+
     // Aquí asegúrate de devolver los datos correctos con uid
     const users = querySnapshot.docs.map(doc => {
       const userData = doc.data();
@@ -308,12 +308,12 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     const docRef = doc(this.firestore, `${collectionName}/${docId}`);
     await deleteDoc(docRef);
   }
-  // obtener recargas 
+  // obtener recargas
   async getRecargasPaginadas(lastDoc: any = null): Promise<{ recargas: any[], lastVisible: any }> {
     try {
       const recargasCollection = collection(this.firestore, 'recargas');
       let q = query(recargasCollection, orderBy('fecha', 'desc'), limit(5)); // Ordena y limita
-      
+
       if (lastDoc) {
         q = query(recargasCollection, orderBy('fecha', 'desc'), startAfter(lastDoc), limit(5)); // Añade paginación
       }
@@ -329,6 +329,79 @@ await this.utilSvc.Alerta('Error','Correo o contraseña invalidos' )
     } catch (error) {
       console.error('Error al obtener recargas paginadas:', error);
       throw error;
+    }
+  }
+  async actualizarSaldo(uid: string, saldo: number, modal?: any): Promise<void> {
+    try {
+      // Obtén el usuario autenticado que realiza la recarga
+      const currentUser = this.auth.currentUser;
+
+      if (!currentUser) {
+        console.error('No hay un usuario autenticado realizando la operación');
+        return;
+      }
+
+      // Referencia a la colección 'drivers' y consulta por email
+      const studentsCollection = collection(this.firestore, 'drivers');
+      const q = query(studentsCollection, where('uid', '==', uid));
+
+      // Ejecuta la consulta
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Obtén el primer documento que coincida
+        const docRef = querySnapshot.docs[0].ref;
+        const data = querySnapshot.docs[0].data() as { saldo: number };
+
+        // Actualiza el saldo
+        const nuevoSaldo = (data.saldo || 0) + saldo;
+        await updateDoc(docRef, { saldo: nuevoSaldo });
+        console.log(`Saldo actualizado. Nuevo saldo: ${nuevoSaldo}`);
+
+
+      } else {
+        console.error('Usuario no encontrado');
+        await this.utilSvc.Alerta('Exito','El usuario no fue encontrado.');
+      }
+    } catch (error) {
+      console.error('Error al actualizar el saldo:', error);
+      await this.utilSvc.Alerta('Errror','Ocurrió un error al realizar la recarga.');
+    }
+  }
+
+  async obtenerSaldo(driverid: string) {
+    try {
+      // Obtén el usuario autenticado que realiza la recarga
+      const currentUser = this.auth.currentUser;
+
+      if (!currentUser) {
+        console.error('No hay un usuario autenticado realizando la operación');
+        return;
+      }
+
+      // Referencia a la colección 'drivers' y consulta por email
+      const studentsCollection = collection(this.firestore, 'drivers');
+      const q = query(studentsCollection, where('uid', '==', driverid));
+
+      // Ejecuta la consulta
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        // Obtén el primer documento que coincida
+        const docRef = querySnapshot.docs[0].ref;
+        const data = querySnapshot.docs[0].data() as { saldo: number };
+
+      let saldo = data.saldo;
+
+      console.log("este es el saldo del chofer"+ ' '+ saldo)
+
+      } else {
+        console.error('Usuario no encontrado');
+       // await this.utilSvc.Alerta('Exito','El usuario no fue encontrado.');
+      }
+    } catch (error) {
+      console.error('Error al actualizar el saldo:', error);
+    //  await this.utilSvc.Alerta('Errror','Ocurrió un error al realizar la recarga.');
     }
   }
 }
