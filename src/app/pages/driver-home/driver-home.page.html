@@ -3,10 +3,20 @@
 
 <ion-content class="center-content">
 
-<h1>{{dsaldo2}}</h1>
+  <div class="center-content">
+    <strong><h4>Tu saldo actual es:</h4></strong>
+    <div *ngIf="isLoading">
+      <ion-spinner name="bubbles"></ion-spinner>
+    </div>
+    
+    <div *ngIf="!isLoading">
+      <p>$ {{ driverBalance }}</p>
+    </div>
+  </div>
 
   <!-- Scanner QR: Solo se muestra si scannerActive es true -->
 <div class="center-content2">
+  
   <ion-button mode="ios"  color="tertiary" (click)="startScan(5)">Cobrar 5 pesos</ion-button>
     <ion-button mode="ios" color="tertiary" (click)="startScan(6)">Cobrar 6 pesos</ion-button>
 

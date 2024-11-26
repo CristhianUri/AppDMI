@@ -27,5 +27,12 @@
   <!-- Información adicional -->
  
   <p class="ion-text-center"><strong>Tu saldo disponible es de:</strong></p>
-  <h1 class="ion-text-center"><strong>${{userBalance}}</strong></h1>
+  <div class="ion-text-center" *ngIf="isLoading">
+    <ion-spinner name="bubbles"></ion-spinner>
+  </div>
+  
+  <div *ngIf="!isLoading">
+    <h1 class="ion-text-center"><strong>${{studentBalance}}</strong></h1>
+  </div>
+ 
 </ion-content>

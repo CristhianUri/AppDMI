@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
+import { Subscription } from 'rxjs';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { IonicModule, AlertController } from '@ionic/angular';
 import { FirebaseService } from '../../service/firebase.service';
 import { Router } from '@angular/router';
 import { QRCodeModule } from 'angularx-qrcode';
 import { NotificationServicesService } from '../../service/notification-services.service';
-import { IonItem, IonRouterOutlet, IonContent, IonHeader, IonToolbar, IonTitle, IonAvatar, IonImg, IonLabel, IonButton } from '@ionic/angular/standalone';
+import { IonItem, IonSpinner,IonRouterOutlet, IonContent, IonHeader, IonToolbar, IonTitle, IonAvatar, IonImg, IonLabel, IonButton } from '@ionic/angular/standalone';
+import { SaldoService } from '../../service/saldo.service';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { IonItem, IonRouterOutlet, IonContent, IonHeader, IonToolbar, IonTitle, 
   templateUrl: './student-home.page.html',
   styleUrls: ['./student-home.page.scss'],
   standalone: true,
-  imports: [IonItem,IonRouterOutlet,IonContent,IonHeader,IonToolbar,IonTitle,IonAvatar,IonImg,IonLabel,IonButton, CommonModule, FormsModule, HeaderComponent, QRCodeModule]
+  imports: [IonItem,IonSpinner,IonRouterOutlet,IonContent,IonHeader,IonToolbar,IonTitle,IonAvatar,IonImg,IonLabel,IonButton, CommonModule, FormsModule, HeaderComponent, QRCodeModule]
 })
 export class StudentHomePage implements OnInit {
   title: string = 'Administrador';
@@ -27,21 +28,39 @@ export class StudentHomePage implements OnInit {
   userBalance: number | null = null;
   notifications: any[] = [];
 
+  ////
+  studentBalance: number | null = null;
+  isLoading: boolean = true;
+
+  private subscriptions: Subscription[] = [];
   constructor(private router: Router, 
     private firebaseService: FirebaseService,
     private notificationService: NotificationServicesService,
     private alertCtrl: AlertController,
-
+    private SaldoService: SaldoService
   ) { }
 
   
   ngOnInit() {
+    const studentId = localStorage.getItem('uid');
     // Suscribirse al flujo de datos de usuario y saldo
     this.firebaseService.userName$.subscribe(name => this.userName = name);
     this.firebaseService.userBalance$.subscribe(balance => {
       this.userBalance = balance !== null ? balance : Number(localStorage.getItem('balance'));
     });
+    
+    // Primero obtenemos los datos iniciales
+    this.SaldoService.getDocumentOnce('students', studentId).then((data) => {
+      this.studentBalance = data?.saldo || null;
+      this.isLoading = false; // Detener el spinner cuando los datos estén listos
+    });
 
+    // Luego, nos suscribimos a los cambios en tiempo real
+    this.subscriptions.push(
+      this.SaldoService.listenToDocument('students', studentId).subscribe((data) => {
+        this.studentBalance = data?.saldo || null;
+      })
+    );
    /* const studentId = localStorage.getItem('uid');
     if (studentId) {
       // Escucha notificaciones en tiempo real
@@ -53,7 +72,7 @@ export class StudentHomePage implements OnInit {
         }
       });
     }*/
-    const studentId = localStorage.getItem('uid');
+    
     if (studentId) {
       // Escucha las notificaciones en tiempo real para el estudiante
       this.notificationService.listenForNotifications(studentId);
@@ -107,5 +126,8 @@ isNotificationDisplayed(notificationId: string): boolean {
       ],
     });
     await alert.present();
+  }
+  ngOnDestroy() {
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
 }

@@ -6,19 +6,21 @@ import {  Router } from '@angular/router';
 import { CobroSubjectService } from 'src/app/service/cobro-subject.service';
 import { QrScannerServiceService } from 'src/app/service/qr-scanner-service.service';
 import { NotificationServicesService } from '../../service/notification-services.service';
-import { IonContent, IonApp, IonRouterOutlet,IonButton } from '@ionic/angular/standalone';
+import { IonContent, IonApp,IonSpinner, IonRouterOutlet,IonButton } from '@ionic/angular/standalone';
 import {  ZXingScannerModule } from '@zxing/ngx-scanner';
 import { BarcodeFormat } from '@zxing/library';
 import { Firestore,collection,doc,getDoc,addDoc,updateDoc } from '@angular/fire/firestore';
 import { RegistroCobroObserverService } from 'src/app/service/registro-cobro-observer.service';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';  // Importación de la cámara
 import { FirebaseService } from 'src/app/service/firebase.service';
+import { Subscription } from 'rxjs';
+import { SaldoService } from '../../service/saldo.service';
 @Component({
   selector: 'app-driver-home',
   templateUrl: './driver-home.page.html',
   styleUrls: ['./driver-home.page.scss'],
   standalone: true,
-  imports: [ZXingScannerModule,IonContent,IonRouterOutlet , CommonModule, FormsModule,HeaderComponent,IonContent,IonButton]
+  imports: [ZXingScannerModule,IonSpinner,IonContent,IonRouterOutlet , CommonModule, FormsModule,HeaderComponent,IonContent,IonButton]
 })
 export class DriverHomePage implements OnInit {
   title: string = 'Administrador';
@@ -29,8 +31,10 @@ export class DriverHomePage implements OnInit {
   showStopButton = false; // Determina si mostrar el botón para detener el escáner
   notificationMessage: string = '';
   driverid : string='';
-  saldo: number=0;
-  dsaldo2: string='';
+  driverBalance: number | null = null;
+  isLoading: boolean = true;
+
+  private subscriptions: Subscription[] = [];
   constructor(
     private router: Router,
     private qrService: QrScannerServiceService,
@@ -38,23 +42,42 @@ export class DriverHomePage implements OnInit {
     private notificacionService: NotificationServicesService,
     private firestore: Firestore,
     private cobroService: CobroSubjectService,
-    private firebaseService2: FirebaseService
+    private firebaseService2: FirebaseService,
+    private SaldoService: SaldoService
   ) {}
 
   ngOnInit() {
+    this.driverid = localStorage.getItem('uid');
     // Suscribirse al observable del monto seleccionado
     this.cobroService.montoSeleccionado$.subscribe(monto => {
       this.selectedAmount = monto;
       console.log(`Monto actualizado: ${this.selectedAmount} pesos`);
     });
-    this.driverid = localStorage.getItem('uid');
    // const dsaldo = this.firebaseService2.obtenerSaldo(this.driverid);
     // Suscribirse a las notificaciones
     this.notificacionService.notificacionesdriver$.subscribe(message => {
       this.notificationMessage = message;
       setTimeout(() => { this.notificationMessage = ''; }, 5000); // Limpiar la notificación después de 5 segundos
     });
+
+   /* this.subscriptions.push(
+      this.SaldoService.listenToDocument('drivers', this.driverid).subscribe((data) => {
+        this.driverBalance = data?.saldo || null;
+      })
+    );*/
+    this.SaldoService.getDocumentOnce('drivers', this.driverid).then((data) => {
+      this.driverBalance = data?.saldo || null;
+      this.isLoading = false; // Detener el spinner cuando los datos estén listos
+    });
+
+    // Luego, nos suscribimos a los cambios en tiempo real
+    this.subscriptions.push(
+      this.SaldoService.listenToDocument('drivers', this.driverid).subscribe((data) => {
+        this.driverBalance = data?.saldo || null;
+      })
+    );
   }
+  
 
   // Método para activar el escáner y mostrar el botón de detener
   startScan(amount: number) {
